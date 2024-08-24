@@ -22,6 +22,20 @@ class Actor:
         self.vigor += option.vig_bonus
         self.speed += option.speed_bonus
 
+    def level_up(self, attribute):
+        match attribute:
+            case 'strength':
+                self.strength += 1
+                self.vigor += 25
+            case 'dexterity':
+                self.dexterity += 1
+            case 'willpower':
+                self.willpower += 1
+            case 'vigor':
+                self.vigor += 75
+
+        self.skill_points += 1
+
 # THIS IS DRIVER CODE TO TEST THE MODULE
 
 # with open('tables/Table_Gods.json') as table:
