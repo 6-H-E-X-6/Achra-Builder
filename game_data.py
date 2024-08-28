@@ -12,8 +12,13 @@ class Race:
         self.vig_bonus = id['life']
         self.speed_bonus = id['speed']
 
-
-class ArchetypeOrReligion:
+# This class exists because the
+# final descriptions for the 
+# classes and religions are stored
+# under description unlike
+# races, which store their
+# description in brief
+class Archetype_Or_Religion:
     def __init__ (self, id: dict):
         self.name = sanitize(id['name'])
         self.description = id['description']

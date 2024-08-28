@@ -14,13 +14,12 @@ class Actor:
         self.speed = 0
         self.glory = 1
         self.skill_points = 9
-
-    def add_attributes(self, option):
-        self.strength += option.str_bonus
-        self.dexterity += option.dex_bonus
-        self.willpower += option.wil_bonus
-        self.vigor += option.vig_bonus
-        self.speed += option.speed_bonus
+ def add_base_attributes(self, character_creation_option):
+        self.strength += character_creation_option.str_bonus
+        self.dexterity += character_creation_option.dex_bonus
+        self.willpower += character_creation_option.wil_bonus
+        self.vigor += character_creation_option.vig_bonus
+        self.speed += character_creation_option.speed_bonus
 
     def level_up(self, attribute):
         match attribute:
@@ -40,10 +39,10 @@ class Actor:
 
 # with open('tables/Table_Gods.json') as table:
 #     deity_table = json.load(table)
-#     deity_dict = {deity : game_data.ArchetypeOrReligion(deity_table[deity]) for deity in deity_table}
+#     deity_dict = {deity : game_data.Archetype_Or_Religion(deity_table[deity]) for deity in deity_table}
 # with open('tables/Table_Classes.json') as table:
 #     archetype_table = json.load(table)
-#     archetype_dict = {archetype : game_data.ArchetypeOrReligion(archetype_table[archetype]) for archetype in archetype_table}
+#     archetype_dict = {archetype : game_data.Archetype_Or_Religion(archetype_table[archetype]) for archetype in archetype_table}
 # with open('tables/Table_Races.json') as table:
 #     cultures_table = json.load(table)
 #     cultures_dict = {culture : game_data.Race(cultures_table[culture]) for culture in cultures_table}
