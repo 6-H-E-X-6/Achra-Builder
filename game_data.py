@@ -66,3 +66,13 @@ class SkillTree:
     def update_points(self):
         for skill in self.skill_list:
             self.total_points += (skill.point_cost * skill.levels)
+
+with open('tables/Table_Gods.json') as table:
+    deity_table = json.load(table)
+    deity_dict = {deity : Archetype_Or_Religion(deity_table[deity]) for deity in deity_table}
+with open('tables/Table_Classes.json') as table:
+    archetype_table = json.load(table)
+    archetype_dict = {archetype : Archetype_Or_Religion(archetype_table[archetype]) for archetype in archetype_table}
+with open('tables/Table_Races.json') as table:
+    culture_table = json.load(table)
+    culture_dict = {culture : Race(culture_table[culture]) for culture in culture_table}

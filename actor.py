@@ -6,7 +6,7 @@ import json
 
 class Actor:
     def __init__(self):
-        self.skill_trees = []
+        self.active_skill_trees = []
         self.strength = 0
         self.dexterity = 0
         self.willpower = 0
