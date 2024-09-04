@@ -4,6 +4,10 @@
 import game_data
 import json
 
+
+MAX_SKILL_TREES = 3
+MAX_SKILL_SLOTS = 9
+
 class ActorModel:
     def __init__(self, culture, archetype, deity):
         self.active_skill_trees = []
@@ -52,16 +56,23 @@ class ActorModel:
         self.update_base_attributes(new_deity, self.deity)
         self.deity = new_deity
 
-    def add_skill(self, skill_name):
+    def add_skill(self, skill):
 
-        # If there are 3 active skill trees, or if
-        # all 9 skill slots are full, don't add a skill
-        if ((len(self.active_skill_trees) = 3 and skill_name.element not in self.active_skill_trees)
-            or (len(self.selected_skills) = 9)):
+        skill_element = skill.element
+        total_active_skill_trees = len(self.active_skill_trees)
+        total_selected_skills = len(self.selected_skills)
+
+        if (total_active_skill_trees == MAX_SKILL_TREES  and skill_element not in self.active_skill_trees)
+            or (total_selected_skills == MAX_SKILL_SLOTS)):
             return
 
-        # TODO We don't need skill trees maybe?
-        # if skill_name in game_data.
+        if skill.point_cost > self.skill_points:
+            return
+
+        if skill_element not in self.active_skill_trees:
+            self.active_skill_trees.append(skill_element)
+
+        self.selected_skills.append(skill)
             
         def level_up(self, attribute):
         match attribute:
