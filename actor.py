@@ -62,7 +62,7 @@ class ActorModel:
         total_active_skill_trees = len(self.active_skill_trees)
         total_selected_skills = len(self.selected_skills)
 
-        if (total_active_skill_trees == MAX_SKILL_TREES  and skill_element not in self.active_skill_trees)
+        if ((total_active_skill_trees == MAX_SKILL_TREES  and skill_element not in self.active_skill_trees)
             or (total_selected_skills == MAX_SKILL_SLOTS)):
             return
 
@@ -74,7 +74,7 @@ class ActorModel:
 
         self.selected_skills.append(skill)
             
-        def level_up(self, attribute):
+    def level_up(self, attribute):
         match attribute:
             case 'strength':
                 self.strength += 1
