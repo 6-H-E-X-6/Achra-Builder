@@ -7,6 +7,7 @@ import json
 class ActorModel:
     def __init__(self, culture, archetype, deity):
         self.active_skill_trees = []
+        self.selected_skills = []
         self.culture = game_data.culture_dict[culture]
         self.archetype = game_data.archetype_dict[archetype]
         self.deity = game_data.deity_dict[deity]
@@ -50,9 +51,19 @@ class ActorModel:
     def change_deity(self, new_deity):
         self.update_base_attributes(new_deity, self.deity)
         self.deity = new_deity
-        
 
-    def level_up(self, attribute):
+    def add_skill(self, skill_name):
+
+        # If there are 3 active skill trees, or if
+        # all 9 skill slots are full, don't add a skill
+        if ((len(self.active_skill_trees) = 3 and skill_name.element not in self.active_skill_trees)
+            or (len(self.selected_skills) = 9)):
+            return
+
+        # TODO We don't need skill trees maybe?
+        # if skill_name in game_data.
+            
+        def level_up(self, attribute):
         match attribute:
             case 'strength':
                 self.strength += 1
