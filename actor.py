@@ -44,6 +44,7 @@ class ActorModel:
         self.vigor += (new_option.vig_bonus - current_option.vig_bonus)
         self.speed += (new_option.speed_bonus - current_option.speed_bonus)
 
+
     def change_culture(self, new_culture):
         self.update_base_attributes(new_culture, self.culture)
         self.culture = new_culture
@@ -56,37 +57,74 @@ class ActorModel:
         self.update_base_attributes(new_deity, self.deity)
         self.deity = new_deity
 
+
     def add_skill(self, skill):
-        skill_element = skill.element
         total_active_skill_trees = len(self.active_skill_trees)
         total_selected_skills = len(self.selected_skills)
 
-        if ((total_active_skill_trees == MAX_SKILL_TREES  and skill_element not in self.active_skill_trees)
+        if ((total_active_skill_trees == MAX_SKILL_TREES  and skill.element not in self.active_skill_trees)
             or (total_selected_skills == MAX_SKILL_SLOTS)):
             return
 
         if skill.point_cost > self.skill_points:
             return
 
-        if skill_element not in self.active_skill_trees:
-            self.active_skill_trees.append(skill_element)
+        if skill.element not in self.active_skill_trees:
+            self.active_skill_trees.append(skill.element)
 
         self.selected_skills.append(skill)
+
+    def remove_skill(self, skill):
+        if skill in self.selected_skills:
+            self.selected_skills.remove(skill)
+            self.skill_points += skill.point_cost
             
-    def level_up(self, attribute):
+
+    def level_up_or_down(self, attribute, level_up = True):
+        can_level_down = self.glory > 1 and self.skill_points > 0
+
         match attribute:
             case 'strength':
-                self.strength += 1
-                self.vigor += 25
-            case 'dexterity':
-                self.dexterity += 1
-            case 'willpower':
-                self.willpower += 1
-            case 'vigor':
-                self.vigor += 75
+                if level_up:
+                    self.strength += 1
+                    self.vigor += 25
+                else:
+                    if not can_level_down:
+                        return
+                    self.strength -= 1
+                    self.vigor += 25
 
-        self.skill_points += 1
-        self.glory += 1
+            case 'dexterity':
+                if level_up:
+                    self.dexterity += 1
+                else:
+                    if not can_level_down:
+                        return
+                    self.dexterity -= 1
+
+            case 'willpower':
+                if level_up:
+                    self.willpower += 1
+                else:
+                    if not can_level_down:
+                        return
+                    self.willpower -= 1
+
+            case 'vigor':
+                if level_up:
+                    self.vigor += 75
+                else:
+                    if not can_level_down:
+                        return
+                    self.vigor -= 75
+
+        if level_up:
+            self.skill_points += 1
+            self.glory += 1
+        else:
+            self.skill_points -= 1
+            self.glory -= 1
+
 
 
 # Default TEST case to make sure none
@@ -103,7 +141,7 @@ def main():
     my_actor.remove_skill(game_data.trait_dict['Bloodcalling'])
     print('Skill removed!')
     print(my_actor.selected_skills)
-    my_actor.level_up('strength')
+    my_actor.level_up_or_down('strength')
     print('\nLevelled up!')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
