@@ -8,6 +8,7 @@ import json
 MAX_SKILL_TREES = 3
 MAX_SKILL_SLOTS = 9
 
+
 class ActorModel:
     def __init__(self, culture, archetype, deity):
         self.active_skill_trees = []
@@ -27,9 +28,6 @@ class ActorModel:
         self.set_base_attributes(self.deity)
 
 
-    # Either edit this function or make a new
-    # set of functions for updating the stats
-    # when either race, archetype, or class are changed
     def set_base_attributes(self, character_creation_option):
         self.strength += character_creation_option.str_bonus
         self.dexterity += character_creation_option.dex_bonus
