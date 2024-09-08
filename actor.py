@@ -57,7 +57,6 @@ class ActorModel:
         self.deity = new_deity
 
     def add_skill(self, skill):
-
         skill_element = skill.element
         total_active_skill_trees = len(self.active_skill_trees)
         total_selected_skills = len(self.selected_skills)
@@ -96,7 +95,16 @@ class ActorModel:
 def main():
     my_actor = ActorModel('Stran', 'Amir', 'Ashem')
     my_actor.change_culture(game_data.culture_dict['Lochra'])
+    my_actor.add_skill(game_data.trait_dict['Bloodcalling'])
     print(f'{my_actor.culture.name} {my_actor.archetype.name} of {my_actor.deity.name}')
+    print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
+          f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
+    print(f'{my_actor.selected_skills[0].name}')
+    my_actor.remove_skill(game_data.trait_dict['Bloodcalling'])
+    print('Skill removed!')
+    print(my_actor.selected_skills)
+    my_actor.level_up('strength')
+    print('\nLevelled up!')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
 
