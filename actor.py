@@ -56,7 +56,7 @@ class ActorModel:
         self.deity = new_deity
 
 
-    def add_skill(self, skill):
+    def add_or_upgrade_skill(self, skill):
         total_active_skill_trees = len(self.active_skill_trees)
         total_selected_skills = len(self.selected_skills)
 
@@ -70,12 +70,22 @@ class ActorModel:
         if skill.element not in self.active_skill_trees:
             self.active_skill_trees.append(skill.element)
 
-        self.selected_skills.append(skill)
-
-    def remove_skill(self, skill):
         if skill in self.selected_skills:
+            skill_location = self.selected_skills.index(skill)
+            self.selected_skills[skill_location].level += 1
+        else:
+            self.selected_skills.append(skill)
+
+        self.skill_points -= skill.point_cost
+
+    def remove_or_downgrade_skill(self, skill):
+        if skill not in self.selected_skills:
+            return
+
+        skill.level -= 1
+        if skill.level == 0:
             self.selected_skills.remove(skill)
-            self.skill_points += skill.point_cost
+        self.skill_points += skill.point_cost
             
 
     def level_up_or_down(self, attribute, level_up = True):
@@ -124,6 +134,7 @@ class ActorModel:
             self.glory -= 1
 
 
+main_actor = ActorModel('Stran', 'Amir', 'Ashem')
 
 # Default TEST case to make sure none
 # of the underlying business logic
@@ -131,13 +142,13 @@ class ActorModel:
 def main():
     my_actor = ActorModel('Stran', 'Amir', 'Ashem')
     my_actor.change_culture(game_data.culture_dict['Lochra'])
-    my_actor.add_skill(game_data.trait_dict['Bloodcalling'])
+    my_actor.add_or_upgrade_skill(game_data.trait_dict['Bloodcalling'])
     print(f'{my_actor.culture.name} {my_actor.archetype.name} of {my_actor.deity.name}')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
-    print(f'{my_actor.selected_skills[0].name}')
-    my_actor.remove_skill(game_data.trait_dict['Bloodcalling'])
-    print('Skill removed!')
+    print(f'{my_actor.selected_skills[0].name} level {my_actor.selected_skills[0].level}')
+    my_actor.remove_or_downgrade_skill(game_data.trait_dict['Bloodcalling'])
+    print('Skill levelled down!')
     print(my_actor.selected_skills)
     my_actor.level_up_or_down('strength')
     print('\nLevelled up!')
