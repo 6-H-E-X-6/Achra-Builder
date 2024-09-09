@@ -34,7 +34,7 @@ class Skill:
         self.description = sanitize(id['Description'])
         self.point_cost = id['cost']
         self.element = id['Element']
-        self.levels = 0
+        self.level = 1
 
 
 # TO BE DELETED?
@@ -84,7 +84,7 @@ with open('tables/Table_Races.json') as table:
 with open('tables/Table_Traits.json') as table:
     trait_table = json.load(table)
     cut_skills = ['Order of Ice', 'Obedient Ice', 'Icewalking', 'Warlord', 'Blademaster', 'War Chant',
-                  'Heartseeker', 'Order of the Stars', 'Cosmic Shield', 'Fume', 'Order of Flame']
+                  'Heartseeker', 'Order of the Stars', 'Cosmic Shield', 'Fume', 'Order of Flame', 'Immolation', 'Fire Chant']
     trait_dict = {trait : Skill(trait_table[trait]) for trait in trait_table 
                     if sanitize(trait_table[trait]['Name']) not in cut_skills}
 
