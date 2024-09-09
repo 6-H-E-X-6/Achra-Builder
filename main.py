@@ -1,20 +1,29 @@
+from game_data import Skill, culture_dict, archetype_dict, deity_dict, trait_dict
+from actor import main_actor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QToolButton, QStackedLayout, QLabel
 from PyQt5.QtGui import QPalette, QColor, QPixmap
+
+
+class SkillButton(QPushButton):
+    def __init__(self, skill):
+        super().__init__()
+        self.setText(trait_dict[skill].name)
+
 
 
 class TablesWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__()
-        self.martialTree = [0 for _ in range(9)]
-        self.fireTree = [0 for _ in range(9)]
-        self.lightningTree = [0 for _ in range(9)]
-        self.poisonTree = [0 for _ in range(9)]
-        self.deathTree = [0 for _ in range(9)]
-        self.iceTree = [0 for _ in range(9)]
-        self.astralTree = [0 for _ in range(9)]
-        self.psychicTree= [0 for _ in range(9)]
-        self.lifeTree = [0 for _ in range(9)]
-        self.bloodTree = [0 for _ in range(9)]
+        self.martialTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Body']
+        self.fireTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Fire']
+        self.lightningTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Lightning']
+        self.poisonTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Poison']
+        self.deathTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Death']
+        self.iceTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Ice']
+        self.astralTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Astral']
+        self.psychicTree= [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Psychic']
+        self.lifeTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Life']
+        self.bloodTree = [SkillButton(skill) for skill in trait_dict if trait_dict[skill].element == 'Blood']
         tree_array = [self.martialTree, self.fireTree, self.lightningTree,
                       self.poisonTree, self.deathTree, self.iceTree,
                       self.astralTree, self.psychicTree, self.lifeTree,
@@ -29,8 +38,7 @@ class TablesWidget(QWidget):
         self.setLayout(lay)
 
     def build_column(self, tree, vlay):
-        for i in tree:
-            button = QToolButton()
+        for button in tree:
             button.setCheckable(True)
             vlay.addWidget(button)
 
