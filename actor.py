@@ -101,6 +101,7 @@ class ActorModel:
                         return
                     self.strength -= 1
                     self.vigor += 25
+                    return
 
             case 'dexterity':
                 if level_up:
@@ -109,6 +110,7 @@ class ActorModel:
                     if not can_level_down:
                         return
                     self.dexterity -= 1
+                    return
 
             case 'willpower':
                 if level_up:
@@ -117,6 +119,7 @@ class ActorModel:
                     if not can_level_down:
                         return
                     self.willpower -= 1
+                    return
 
             case 'vigor':
                 if level_up:
@@ -125,6 +128,9 @@ class ActorModel:
                     if not can_level_down:
                         return
                     self.vigor -= 75
+                    return
+            case _:
+                return
 
         if level_up:
             self.skill_points += 1

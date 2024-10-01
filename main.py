@@ -2,6 +2,7 @@ from game_data import Skill, culture_dict, archetype_dict, deity_dict, trait_dic
 from actor import main_actor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QToolButton, QStackedLayout, QLabel, QComboBox
 from PyQt5.QtGui import QPalette, QColor, QPixmap
+from PyQt5.QtCore import pyqtSignal
 
 
 class SkillButton(QPushButton):
@@ -14,10 +15,24 @@ class SkillButton(QPushButton):
         self.clicked.connect(lambda state, skill=skill : main_actor.add_or_upgrade_skill(skill))
         self.clicked.connect(self.update_text)
 
+    # BUG This only updates to the
+    # previous value
     def update_text(self):
         self.setText(f'{self.skill.name}: {self.skill.level}')
 
 
+
+class StatButton(QPushButton):
+    def __init__(self, attribute):
+        super().__init__()
+        attribute = attribute.lower()
+        self.setText(f'{'+' : ^10}')
+        self.clicked.connect(lambda state, attribute=attribute : main_actor.level_up_or_down(attribute))
+
+
+    # TODO Add control logic.
+    # This is, as it stands,
+    # a purely visual element.
 class ActorControlWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__()
@@ -35,43 +50,55 @@ class ActorControlWidget(QWidget):
         self.setLayout(self.combo_hlay)
 
             
-    # TODO Add control logic.
-    # This is, as it stands,
-    # a purely visual element.
 
 
 class StatViewerWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__()
+        self.stat_names = ['Strength', 'Dexterity', 'Willpower', 'Vigor', 'Skill Points']
         self.stats_label_hlay = QHBoxLayout()
         self.stats_display_hlay = QHBoxLayout()
         self.stats_control_hlay = QHBoxLayout()
+
         self.stats_widget_full = QVBoxLayout()
         self.stats_widget_full.addLayout(self.stats_label_hlay)
         self.stats_widget_full.addLayout(self.stats_display_hlay)
         self.stats_widget_full.addLayout(self.stats_control_hlay)
         self.setLayout(self.stats_widget_full)
 
-
         self.strength_display = QLabel(str(main_actor.strength))
         self.dexterity_display = QLabel(str(main_actor.dexterity))
         self.willpower_display = QLabel(str(main_actor.willpower))
         self.vigor_display = QLabel(str(main_actor.vigor))
         self.skill_points_display = QLabel(str(main_actor.skill_points))
+
         self.stats_display_hlay_array = [self.strength_display, self.dexterity_display,
                                          self.willpower_display, self.vigor_display,
                                          self.skill_points_display]
+
         for display_component in self.stats_display_hlay_array:
             self.stats_display_hlay.addWidget(display_component)
 
-        self.stat_names = ['Strength', 'Dexterity', 'Willpower', 'Vigor', 'Skill Points']
         for stat in self.stat_names:
             new_label = QLabel(str(stat))
             self.stats_label_hlay.addWidget(new_label)
 
-        
+        for stat in self.stat_names[:-1]:
+            new_button = StatButton(stat)
+            new_button.clicked.connect(self.update_display)
+            self.stats_control_hlay.addWidget(new_button)
 
-        
+
+        # This is a filler column for alignment
+        # purposes
+        self.stats_control_hlay.addWidget(QLabel())
+
+    def update_display(self):
+        self.strength_display.setText(str(main_actor.strength))
+        self.dexterity_display.setText(str(main_actor.dexterity))
+        self.willpower_display.setText(str(main_actor.willpower))
+        self.vigor_display.setText(str(main_actor.vigor))
+        self.skill_points_display.setText(str(main_actor.skill_points))
 
 
 class TablesWidget(QWidget):
@@ -87,14 +114,14 @@ class TablesWidget(QWidget):
         self.psychicTree= [SkillButton(trait_dict[skill]) for skill in trait_dict if trait_dict[skill].element == 'Psychic']
         self.lifeTree = [SkillButton(trait_dict[skill]) for skill in trait_dict if trait_dict[skill].element == 'Life']
         self.bloodTree = [SkillButton(trait_dict[skill]) for skill in trait_dict if trait_dict[skill].element == 'Blood']
-        tree_array = [self.martialTree, self.fireTree, self.lightningTree,
+        self.tree_array = [self.martialTree, self.fireTree, self.lightningTree,
                       self.poisonTree, self.deathTree, self.iceTree,
                       self.astralTree, self.psychicTree, self.lifeTree,
                       self.bloodTree]
 
         lay = QHBoxLayout()
         vlay_array = [QVBoxLayout() for i in range(1, 10)]
-        for tree, vlay in zip(tree_array, vlay_array):
+        for tree, vlay in zip(self.tree_array, vlay_array):
             self.build_column(tree, vlay)
         for vlay in vlay_array:
             lay.addLayout(vlay)
@@ -102,7 +129,6 @@ class TablesWidget(QWidget):
 
     def build_column(self, tree, vlay):
         for button in tree:
-            button.setCheckable(True)
             vlay.addWidget(button)
 
 
@@ -128,6 +154,10 @@ class MainView(QMainWindow):
         _layout.addWidget(self.table_widget)
         self.setCentralWidget(_widget)
         self.setWindowTitle("Achra Builder")
+
+        for tree in self.table_widget.tree_array:
+            for button in tree:
+                button.clicked.connect(self.stats_widget.update_display)
         
 app = QApplication([])
 # app.setStyleSheet(window_stylesheet)
