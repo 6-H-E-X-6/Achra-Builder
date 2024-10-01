@@ -9,6 +9,8 @@ MAX_SKILL_TREES = 3
 MAX_SKILL_SLOTS = 9
 
 
+# TODO prevent the user from going under
+# the base stat totals
 class ActorModel:
     def __init__(self, culture, archetype, deity):
         self.active_skill_trees = []
@@ -101,7 +103,6 @@ class ActorModel:
                         return
                     self.strength -= 1
                     self.vigor += 25
-                    return
 
             case 'dexterity':
                 if level_up:
@@ -110,7 +111,6 @@ class ActorModel:
                     if not can_level_down:
                         return
                     self.dexterity -= 1
-                    return
 
             case 'willpower':
                 if level_up:
@@ -119,7 +119,6 @@ class ActorModel:
                     if not can_level_down:
                         return
                     self.willpower -= 1
-                    return
 
             case 'vigor':
                 if level_up:
@@ -128,7 +127,6 @@ class ActorModel:
                     if not can_level_down:
                         return
                     self.vigor -= 75
-                    return
             case _:
                 return
 
