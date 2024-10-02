@@ -34,7 +34,7 @@ class Skill:
         self.description = sanitize(id['Description'])
         self.point_cost = id['cost']
         self.element = id['Element']
-        self.level = 1
+        self.level = 0
 
 
 # TO BE DELETED?
