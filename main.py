@@ -15,19 +15,22 @@ class SkillButton(QPushButton):
         self.clicked.connect(lambda state, skill=skill : main_actor.add_or_upgrade_skill(skill))
         self.clicked.connect(self.update_text)
 
-    # BUG This only updates to the
-    # previous value
     def update_text(self):
         self.setText(f'{self.skill.name}: {self.skill.level}')
 
 
 
 class StatButton(QPushButton):
-    def __init__(self, attribute):
+    def __init__(self, attribute, is_level_up=True):
         super().__init__()
         attribute = attribute.lower()
-        self.setText(f'{'+' : ^10}')
-        self.clicked.connect(lambda state, attribute=attribute : main_actor.level_up_or_down(attribute))
+
+        if is_level_up:
+            self.setText(f'{'+' : ^10}')
+            self.clicked.connect(lambda state, attribute=attribute : main_actor.level_up_or_down(attribute))
+        else:
+            self.setText(f'{'-' : ^10}')
+            self.clicked.connect(lambda state, attribute=attribute : main_actor.level_up_or_down(attribute, level_up=False))
 
 
     # TODO Add control logic.
@@ -48,8 +51,6 @@ class ActorControlWidget(QWidget):
         self.combo_hlay.addWidget(self.archetype_dropdown)
         self.combo_hlay.addWidget(self.deity_dropdown)
         self.setLayout(self.combo_hlay)
-
-            
 
 
 class StatViewerWidget(QWidget):
@@ -83,15 +84,19 @@ class StatViewerWidget(QWidget):
             new_label = QLabel(str(stat))
             self.stats_label_hlay.addWidget(new_label)
 
-        for stat in self.stat_names[:-1]:
-            new_button = StatButton(stat)
-            new_button.clicked.connect(self.update_display)
-            self.stats_control_hlay.addWidget(new_button)
+        self.upgradable_stats = self.stat_names[:-1]
+        for stat in self.upgradable_stats:
+            self.level_up_button = StatButton(stat)
+            self.level_up_button.clicked.connect(self.update_display)
+            self.level_down_button = StatButton(stat, is_level_up=False)
+            self.level_down_button.clicked.connect(self.update_display)
+            self.stats_control_hlay.addWidget(self.level_up_button)
+            self.stats_control_hlay.addWidget(self.level_down_button)
 
-
-        # This is a filler column for alignment
-        # purposes
-        self.stats_control_hlay.addWidget(QLabel())
+        self.glory_text_header = QLabel('Glory')
+        self.glory_level_display = QLabel(f'{main_actor.glory}')
+        self.stats_control_hlay.addWidget(QLabel('Glory'))
+        self.stats_control_hlay.addWidget(self.glory_level_display)
 
     def update_display(self):
         self.strength_display.setText(str(main_actor.strength))
@@ -99,6 +104,7 @@ class StatViewerWidget(QWidget):
         self.willpower_display.setText(str(main_actor.willpower))
         self.vigor_display.setText(str(main_actor.vigor))
         self.skill_points_display.setText(str(main_actor.skill_points))
+        self.glory_level_display.setText(str(main_actor.glory))
 
 
 class TablesWidget(QWidget):
