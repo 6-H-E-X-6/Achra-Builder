@@ -77,6 +77,8 @@ class ActorModel:
             self.selected_skills[skill_location].level += 1
         else:
             self.selected_skills.append(skill)
+            skill_location = self.selected_skills.index(skill)
+            self.selected_skills[skill_location].level += 1
 
         self.skill_points -= skill.point_cost
 
