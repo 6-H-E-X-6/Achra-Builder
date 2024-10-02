@@ -45,17 +45,17 @@ class ActorModel:
         self.speed += (new_option.speed_bonus - current_option.speed_bonus)
 
 
-    def change_culture(self, new_culture):
-        self.update_base_attributes(new_culture, self.culture)
-        self.culture = new_culture
+    def change_culture(self, new_culture : str):
+        self.update_base_attributes(game_data.culture_dict[new_culture], self.culture)
+        self.culture = game_data.culture_dict[new_culture]
 
-    def change_archetype(self, new_archetype):
-        self.update_base_attributes(new_archetype, self.archetype)
-        self.archetype = new_archetype
+    def change_archetype(self, new_archetype : str):
+        self.update_base_attributes(game_data.archetype_dict[new_archetype], self.archetype)
+        self.archetype = game_data.archetype_dict[new_archetype]
 
-    def change_deity(self, new_deity):
-        self.update_base_attributes(new_deity, self.deity)
-        self.deity = new_deity
+    def change_deity(self, new_deity : str):
+        self.update_base_attributes(game_data.deity_dict[new_deity], self.deity)
+        self.deity = game_data.deity_dict[new_deity]
 
 
     def add_or_upgrade_skill(self, skill):
