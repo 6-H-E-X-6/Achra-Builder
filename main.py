@@ -41,10 +41,15 @@ class ActorControlWidget(QWidget):
         super().__init__()
         self.culture_dropdown = QComboBox()
         self.culture_dropdown.addItems([culture_dict[culture].name for culture in culture_dict])
+        self.culture_dropdown.currentTextChanged.connect(main_actor.change_culture)
+
         self.archetype_dropdown = QComboBox()
         self.archetype_dropdown.addItems([archetype_dict[archetype].name for archetype in archetype_dict])
+        self.archetype_dropdown.currentTextChanged.connect(main_actor.change_archetype)
+
         self.deity_dropdown = QComboBox()
         self.deity_dropdown.addItems([deity_dict[deity].name for deity in deity_dict])
+        self.deity_dropdown.currentTextChanged.connect(main_actor.change_deity)
 
         self.combo_hlay = QHBoxLayout()
         self.combo_hlay.addWidget(self.culture_dropdown)
@@ -86,12 +91,12 @@ class StatViewerWidget(QWidget):
 
         self.upgradable_stats = self.stat_names[:-1]
         for stat in self.upgradable_stats:
-            self.level_up_button = StatButton(stat)
-            self.level_up_button.clicked.connect(self.update_display)
             self.level_down_button = StatButton(stat, is_level_up=False)
             self.level_down_button.clicked.connect(self.update_display)
-            self.stats_control_hlay.addWidget(self.level_up_button)
+            self.level_up_button = StatButton(stat)
+            self.level_up_button.clicked.connect(self.update_display)
             self.stats_control_hlay.addWidget(self.level_down_button)
+            self.stats_control_hlay.addWidget(self.level_up_button)
 
         self.glory_text_header = QLabel('Glory')
         self.glory_level_display = QLabel(f'{main_actor.glory}')
@@ -161,6 +166,9 @@ class MainView(QMainWindow):
         self.setCentralWidget(_widget)
         self.setWindowTitle("Achra Builder")
 
+        self.actor_widget.culture_dropdown.currentTextChanged.connect(self.stats_widget.update_display)
+        self.actor_widget.archetype_dropdown.currentTextChanged.connect(self.stats_widget.update_display)
+        self.actor_widget.deity_dropdown.currentTextChanged.connect(self.stats_widget.update_display)
         for tree in self.table_widget.tree_array:
             for button in tree:
                 button.clicked.connect(self.stats_widget.update_display)
