@@ -15,6 +15,7 @@ class ActorModel:
     def __init__(self, culture, archetype, deity):
         self.active_skill_trees = []
         self.selected_skills = []
+        self.base_stats = {}
         self.culture = game_data.culture_dict[culture]
         self.archetype = game_data.archetype_dict[archetype]
         self.deity = game_data.deity_dict[deity]
@@ -25,17 +26,19 @@ class ActorModel:
         self.speed = 0
         self.glory = 1
         self.skill_points = 9
-        self.set_base_attributes(self.culture)
-        self.set_base_attributes(self.archetype)
-        self.set_base_attributes(self.deity)
+        self.set_base_attributes()
 
 
-    def set_base_attributes(self, character_creation_option):
-        self.strength += character_creation_option.str_bonus
-        self.dexterity += character_creation_option.dex_bonus
-        self.willpower += character_creation_option.wil_bonus
-        self.vigor += character_creation_option.vig_bonus
-        self.speed += character_creation_option.speed_bonus
+    def set_base_attributes(self):
+        for character_creation_option in [self.culture, self.archetype, self.deity]:
+            self.strength += character_creation_option.str_bonus
+            self.dexterity += character_creation_option.dex_bonus
+            self.willpower += character_creation_option.wil_bonus
+            self.vigor += character_creation_option.vig_bonus
+            self.speed += character_creation_option.speed_bonus
+            self.base_stats = {'strength' : self.strength, 'dexterity' : self.dexterity,
+                                'willpower' : self.willpower, 'vigor' : self.vigor,
+                                'speed' : self.speed}
 
     def update_base_attributes(self, new_option, current_option):
         self.strength += (new_option.str_bonus - current_option.str_bonus)
@@ -43,6 +46,12 @@ class ActorModel:
         self.willpower += (new_option.wil_bonus - current_option.wil_bonus)
         self.vigor += (new_option.vig_bonus - current_option.vig_bonus)
         self.speed += (new_option.speed_bonus - current_option.speed_bonus)
+
+        self.base_stats['strength'] += (new_option.str_bonus - current_option.str_bonus)
+        self.base_stats['dexterity'] += (new_option.dex_bonus - current_option.dex_bonus)
+        self.base_stats['willpower'] += (new_option.wil_bonus - current_option.wil_bonus)
+        self.base_stats['vigor'] += (new_option.vig_bonus - current_option.vig_bonus)
+        self.base_stats['speed'] += (new_option.speed_bonus - current_option.speed_bonus)
 
 
     def change_culture(self, new_culture : str):
@@ -87,30 +96,31 @@ class ActorModel:
             return
 
         skill.level -= 1
-        if skill.level == 0:
+        if skill.level <= 0:
             self.selected_skills.remove(skill)
         self.skill_points += skill.point_cost
             
 
     def level_up_or_down(self, attribute, level_up = True):
         can_level_down = self.glory > 1 and self.skill_points > 0
-
         match attribute:
             case 'strength':
                 if level_up:
                     self.strength += 1
                     self.vigor += 25
+                    self.base_stats['vigor'] += 25
                 else:
-                    if not can_level_down:
+                    if not can_level_down or self.strength == self.base_stats['strength']:
                         return
                     self.strength -= 1
-                    self.vigor += 25
+                    self.vigor -= 25
+                    self.base_stats['vigor'] -= 25
 
             case 'dexterity':
                 if level_up:
                     self.dexterity += 1
                 else:
-                    if not can_level_down:
+                    if not can_level_down or self.dexterity == self.base_stats['dexterity']:
                         return
                     self.dexterity -= 1
 
@@ -118,7 +128,7 @@ class ActorModel:
                 if level_up:
                     self.willpower += 1
                 else:
-                    if not can_level_down:
+                    if not can_level_down or self.willpower == self.base_stats['willpower']:
                         return
                     self.willpower -= 1
 
@@ -126,7 +136,7 @@ class ActorModel:
                 if level_up:
                     self.vigor += 75
                 else:
-                    if not can_level_down:
+                    if not can_level_down or self.vigor == self.base_stats['vigor']:
                         return
                     self.vigor -= 75
             case _:
@@ -139,6 +149,20 @@ class ActorModel:
             self.skill_points -= 1
             self.glory -= 1
 
+    
+    # HACK not happy with how this
+    # came out. I should find a way to
+    # convert this to an iterative
+    # function
+    # TODO fix this mess
+    def reset_actor(self):
+        self.strength = 0
+        self.dexterity = 0
+        self.willpower = 0
+        self.vigor = 0
+        self.speed = 0
+
+        self.set_base_attributes()
 
 main_actor = ActorModel('Stran', 'Amir', 'Ashem')
 
@@ -147,19 +171,30 @@ main_actor = ActorModel('Stran', 'Amir', 'Ashem')
 # has been broken.
 def main():
     my_actor = ActorModel('Stran', 'Amir', 'Ashem')
-    my_actor.change_culture(game_data.culture_dict['Lochra'])
+    print(my_actor.base_stats)
+    my_actor.change_culture('Lochra')
+    print(my_actor.base_stats)
+    my_actor.change_culture('Stran')
+    print(my_actor.base_stats)
     my_actor.add_or_upgrade_skill(game_data.trait_dict['Bloodcalling'])
+
     print(f'{my_actor.culture.name} {my_actor.archetype.name} of {my_actor.deity.name}')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
     print(f'{my_actor.selected_skills[0].name} level {my_actor.selected_skills[0].level}')
-    my_actor.remove_or_downgrade_skill(game_data.trait_dict['Bloodcalling'])
     print('Skill levelled down!')
-    print(my_actor.selected_skills)
+
+
     my_actor.level_up_or_down('strength')
     print('\nLevelled up!')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
+
+    my_actor.reset_actor()
+    print('\nReset!')
+    print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
+          f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
+    print(f'{my_actor.selected_skills[0].name} level {my_actor.selected_skills[0].level}')
 
 if __name__ == '__main__':
     main()
