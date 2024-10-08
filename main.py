@@ -1,6 +1,9 @@
 from game_data import Skill, culture_dict, archetype_dict, deity_dict, trait_dict
 from actor import main_actor
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QToolButton, QStackedLayout, QLabel, QComboBox
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QHBoxLayout,
+                             QVBoxLayout, QPushButton, QWidget, QToolButton,
+                              QStackedLayout, QLabel, QComboBox, QToolBar,
+                              QAction, QStatusBar)
 from PyQt5.QtGui import QPalette, QColor, QPixmap
 from PyQt5.QtCore import pyqtSignal
 
@@ -157,6 +160,7 @@ class MainView(QMainWindow):
         self.table_widget = TablesWidget()
         self.actor_widget = ActorControlWidget()
         self.stats_widget = StatViewerWidget()
+        self.skill_button_array = []
        
         _widget = QWidget()
         _layout = QVBoxLayout(_widget)
@@ -172,9 +176,31 @@ class MainView(QMainWindow):
         for tree in self.table_widget.tree_array:
             for button in tree:
                 button.clicked.connect(self.stats_widget.update_display)
+                self.skill_button_array.append(button)
+
+        # TODO refactor in a more modular way
+        self.character_control_bar = QToolBar("Main Toolbar")
+        self.addToolBar(self.character_control_bar)
+
+        reset_character_button = QAction("Reset", self)
+        reset_character_button.setStatusTip("Reset character stats and skill trees")
+        reset_character_button.triggered.connect(main_actor.reset_actor)
+        reset_character_button.triggered.connect(self.stats_widget.update_display)
+        reset_character_button.triggered.connect(self.flush_skill_trees)
+        self.character_control_bar.addAction(reset_character_button)
+        self.setStatusBar(QStatusBar(self))
+
+    def flush_skill_trees(self):
+        for button in self.skill_button_array:
+            button.update_text()
         
-app = QApplication([])
-# app.setStyleSheet(window_stylesheet)
-mainView = MainView()
-mainView.show()
-app.exec()
+def main():
+    app = QApplication([])
+    # app.setStyleSheet(window_stylesheet)
+    mainView = MainView()
+    mainView.show()
+    app.exec()
+
+if __name__ == '__main__':
+    main()
+

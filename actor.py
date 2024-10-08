@@ -161,8 +161,15 @@ class ActorModel:
         self.willpower = 0
         self.vigor = 0
         self.speed = 0
-
+        self.glory = 1
+        self.skill_points = 9
         self.set_base_attributes()
+
+        for skill in self.selected_skills:
+            skill.level = 0
+            self.selected_skills.remove(skill)
+        for skill_tree in self.active_skill_trees:
+            self.active_skill_trees.remove(skill_tree)
 
 main_actor = ActorModel('Stran', 'Amir', 'Ashem')
 
