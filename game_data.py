@@ -85,7 +85,7 @@ with open('tables/Table_Traits.json') as table:
     trait_table = json.load(table)
     cut_skills = ['Order of Ice', 'Obedient Ice', 'Icewalking', 'Warlord', 'Blademaster', 'War Chant',
                   'Heartseeker', 'Order of the Stars', 'Cosmic Shield', 'Fume', 'Order of Flame', 'Immolation', 'Fire Chant']
-    trait_dict = {trait : Skill(trait_table[trait]) for trait in trait_table 
+    trait_dict = {sanitize(trait_table[trait]['Name']) : Skill(trait_table[trait]) for trait in trait_table 
                     if sanitize(trait_table[trait]['Name']) not in cut_skills}
 
     # LEFTOVER CODE - MIGHT NEED LATER
