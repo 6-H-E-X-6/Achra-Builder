@@ -22,7 +22,6 @@ class SkillButton(QPushButton):
         self.setText(f'{self.skill.name}: {self.skill.level}')
 
 
-
 class StatButton(QPushButton):
     def __init__(self, attribute, is_level_up=True):
         super().__init__()
@@ -36,9 +35,24 @@ class StatButton(QPushButton):
             self.clicked.connect(lambda state, attribute=attribute : main_actor.level_up_or_down(attribute, level_up=False))
 
 
-    # TODO Add control logic.
-    # This is, as it stands,
-    # a purely visual element.
+# TODO
+# This really should list skill level instead of
+# the SkillButton class
+class SkillListButton(QPushButton):
+    def __init__(self, display_text='None'):
+        super().__init__()
+        self.setText(display_text)
+        self.clicked.connect(self.remove_skill)
+
+    def remove_skill(self):
+        if self.text() == 'None':
+            return
+        else:
+            main_actor.remove_or_downgrade_skill(trait_dict[self.text()])
+            if trait_dict[self.text()] not in main_actor.selected_skills:
+                self.setText('None')
+
+
 class ActorControlWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__()
@@ -114,6 +128,34 @@ class StatViewerWidget(QWidget):
         self.skill_points_display.setText(str(main_actor.skill_points))
         self.glory_level_display.setText(str(main_actor.glory))
 
+class SkillListWidget(QWidget):
+
+    def __init__(self, parent=None):
+        super().__init__()
+        self.list_hlay = QHBoxLayout()
+        self.button_list = []
+        for i in range(9):
+            new_button = SkillListButton()
+            new_button.clicked.connect(self.update)
+            self.list_hlay.addWidget(new_button)
+            self.button_list.append(new_button)
+
+        self.setLayout(self.list_hlay)
+
+    # TODO
+    # This needs to work both ways
+    def update(self):
+        amount_of_skills = len(main_actor.selected_skills)
+        for i in range(amount_of_skills):
+            skill_name = main_actor.selected_skills[i].name
+            self.button_list[i].setText(skill_name)
+
+        # There's probably a more elegant way
+        # to handle this
+        for button in self.button_list[amount_of_skills:]:
+            button.setText('None')
+
+       
 
 class TablesWidget(QWidget):
     def __init__(self, parent=None):
@@ -146,6 +188,7 @@ class TablesWidget(QWidget):
             vlay.addWidget(button)
 
 
+
 window_stylesheet = """
     QMainWindow {
         border-image: url(graphical/Approach48.png);
@@ -160,12 +203,13 @@ class MainView(QMainWindow):
         self.table_widget = TablesWidget()
         self.actor_widget = ActorControlWidget()
         self.stats_widget = StatViewerWidget()
-        self.skill_button_array = []
+        self.skill_list_widget = SkillListWidget()
        
         _widget = QWidget()
         _layout = QVBoxLayout(_widget)
         _layout.addWidget(self.actor_widget)
         _layout.addWidget(self.stats_widget)
+        _layout.addWidget(self.skill_list_widget)
         _layout.addWidget(self.table_widget)
         self.setCentralWidget(_widget)
         self.setWindowTitle("Achra Builder")
@@ -173,10 +217,14 @@ class MainView(QMainWindow):
         self.actor_widget.culture_dropdown.currentTextChanged.connect(self.stats_widget.update_display)
         self.actor_widget.archetype_dropdown.currentTextChanged.connect(self.stats_widget.update_display)
         self.actor_widget.deity_dropdown.currentTextChanged.connect(self.stats_widget.update_display)
+
         for tree in self.table_widget.tree_array:
             for button in tree:
                 button.clicked.connect(self.stats_widget.update_display)
-                self.skill_button_array.append(button)
+                button.clicked.connect(self.skill_list_widget.update)
+
+        for button in self.skill_list_widget.button_list:
+            button.clicked.connect(self.stats_widget.update_display)
 
         # TODO refactor in a more modular way
         self.character_control_bar = QToolBar("Main Toolbar")
@@ -190,9 +238,12 @@ class MainView(QMainWindow):
         self.character_control_bar.addAction(reset_character_button)
         self.setStatusBar(QStatusBar(self))
 
+    # TODO See if it's possible to remove the skill_button_array
+    # variable
     def flush_skill_trees(self):
-        for button in self.skill_button_array:
-            button.update_text()
+        for tree in self.table_widget.tree_array:
+            for button in tree:
+                button.update_text()
         
 def main():
     app = QApplication([])
@@ -203,4 +254,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
