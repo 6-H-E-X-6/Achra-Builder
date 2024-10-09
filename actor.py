@@ -91,6 +91,8 @@ class ActorModel:
 
         self.skill_points -= skill.point_cost
 
+    # TODO make this remove
+    # active skill trees too
     def remove_or_downgrade_skill(self, skill):
         if skill not in self.selected_skills:
             return
@@ -98,8 +100,14 @@ class ActorModel:
         skill.level -= 1
         if skill.level <= 0:
             self.selected_skills.remove(skill)
+            self.free_unused_tree(skill.element)
         self.skill_points += skill.point_cost
-            
+
+    # Work on this
+    def free_unused_tree(self, element):
+        active_elements = [skill.element for skill in self.selected_skills]
+        if element not in active_elements:
+            self.active_skill_trees.remove(element)
 
     def level_up_or_down(self, attribute, level_up = True):
         can_level_down = self.glory > 1 and self.skill_points > 0
