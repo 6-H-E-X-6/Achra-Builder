@@ -1,5 +1,5 @@
 from game_data import Skill, culture_dict, archetype_dict, deity_dict, trait_dict
-from actor import main_actor
+from actor import main_actor, MAX_SKILL_SLOTS
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QHBoxLayout,
                              QVBoxLayout, QPushButton, QWidget, QToolButton,
                               QStackedLayout, QLabel, QComboBox, QToolBar,
@@ -134,7 +134,7 @@ class SkillListWidget(QWidget):
         super().__init__()
         self.list_hlay = QHBoxLayout()
         self.button_list = []
-        for i in range(9):
+        for i in range(MAX_SKILL_SLOTS):
             new_button = SkillListButton()
             new_button.clicked.connect(self.update)
             self.list_hlay.addWidget(new_button)
@@ -238,8 +238,6 @@ class MainView(QMainWindow):
         self.character_control_bar.addAction(reset_character_button)
         self.setStatusBar(QStatusBar(self))
 
-    # TODO See if it's possible to remove the skill_button_array
-    # variable
     def flush_skill_trees(self):
         for tree in self.table_widget.tree_array:
             for button in tree:
