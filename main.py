@@ -8,6 +8,15 @@ from PyQt5.QtGui import QPalette, QColor, QPixmap
 from PyQt5.QtCore import pyqtSignal
 
 
+# TODO:
+# - Either give the skill level
+# display to SkillListButton
+# or find a way to make it globally
+# update (less realistic, honestly)
+#
+# - Fix the formatting on StatsDisplayWidget
+# (1 QVBox per stat and every one of its controls)
+
 class SkillButton(QPushButton):
     def __init__(self, skill):
         super().__init__()
