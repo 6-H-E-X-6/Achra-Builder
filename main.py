@@ -44,6 +44,38 @@ class StatButton(QPushButton):
             self.clicked.connect(lambda state, attribute=attribute : main_actor.level_up_or_down(attribute, level_up=False))
 
 
+class StatWidget(QWidget):
+    def __init__(self, stat,  parent=None):
+        super().__init__()
+        self.filler = QLabel()
+        self.vlay = QVBoxLayout()
+        self.text_hlay = QHBoxLayout()
+        self.stat_hlay = QHBoxLayout()
+        self.button_hlay = QHBoxLayout()
+        self.upgrade_button = StatButton(stat)
+        self.downgrade_button = StatButton(stat, is_level_up=False)
+        self.button_reference_array = [self.upgrade_button, self.downgrade_button]
+        self.stat_label = QLabel(f'{stat : ^20}')
+        self.stat_display = QLabel(f'{str(0) : ^20}')
+
+        self.text_hlay.addWidget(self.filler)
+        self.text_hlay.addWidget(self.stat_label)
+        self.text_hlay.addWidget(self.filler)
+
+        self.stat_hlay.addWidget(self.filler)
+        self.stat_hlay.addWidget(self.stat_display)
+        self.stat_hlay.addWidget(self.filler)
+
+        self.button_hlay.addWidget(self.downgrade_button)
+        self.button_hlay.addWidget(self.filler)
+        self.button_hlay.addWidget(self.upgrade_button)
+
+        self.vlay.addLayout(self.text_hlay)
+        self.vlay.addLayout(self.stat_hlay)
+        self.vlay.addLayout(self.button_hlay)
+
+        self.setLayout(self.vlay)
+
 # TODO
 # This really should list skill level instead of
 # the SkillButton class
@@ -87,55 +119,45 @@ class ActorControlWidget(QWidget):
 class StatViewerWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__()
-        self.stat_names = ['Strength', 'Dexterity', 'Willpower', 'Vigor', 'Skill Points']
-        self.stats_label_hlay = QHBoxLayout()
-        self.stats_display_hlay = QHBoxLayout()
-        self.stats_control_hlay = QHBoxLayout()
+        self.stat_hlay = QHBoxLayout()
+        self.skill_and_glory_vlay = QVBoxLayout()
 
-        self.stats_widget_full = QVBoxLayout()
-        self.stats_widget_full.addLayout(self.stats_label_hlay)
-        self.stats_widget_full.addLayout(self.stats_display_hlay)
-        self.stats_widget_full.addLayout(self.stats_control_hlay)
-        self.setLayout(self.stats_widget_full)
+        self.strength_display = self.create_stat_controller('Strength')
+        self.stat_hlay.addWidget(self.strength_display)
 
-        self.strength_display = QLabel(str(main_actor.strength))
-        self.dexterity_display = QLabel(str(main_actor.dexterity))
-        self.willpower_display = QLabel(str(main_actor.willpower))
-        self.vigor_display = QLabel(str(main_actor.vigor))
-        self.skill_points_display = QLabel(str(main_actor.skill_points))
+        self.dex_display = self.create_stat_controller('Dexterity')
+        self.stat_hlay.addWidget(self.dex_display)
 
-        self.stats_display_hlay_array = [self.strength_display, self.dexterity_display,
-                                         self.willpower_display, self.vigor_display,
-                                         self.skill_points_display]
+        self.wil_display = self.create_stat_controller('Willpower')
+        self.stat_hlay.addWidget(self.wil_display)
 
-        for display_component in self.stats_display_hlay_array:
-            self.stats_display_hlay.addWidget(display_component)
+        self.vig_display = self.create_stat_controller('Vigor')
+        self.stat_hlay.addWidget(self.vig_display)
 
-        for stat in self.stat_names:
-            new_label = QLabel(str(stat))
-            self.stats_label_hlay.addWidget(new_label)
+        self.glory_level_display = QLabel(f'Glory: {str(main_actor.glory)}')
+        self.skill_points_display = QLabel(f'Skill Points: {str(main_actor.skill_points)}')
 
-        self.upgradable_stats = self.stat_names[:-1]
-        for stat in self.upgradable_stats:
-            self.level_down_button = StatButton(stat, is_level_up=False)
-            self.level_down_button.clicked.connect(self.update_display)
-            self.level_up_button = StatButton(stat)
-            self.level_up_button.clicked.connect(self.update_display)
-            self.stats_control_hlay.addWidget(self.level_down_button)
-            self.stats_control_hlay.addWidget(self.level_up_button)
+        self.skill_and_glory_vlay.addWidget(self.glory_level_display)
+        self.skill_and_glory_vlay.addWidget(self.skill_points_display)
+        self.stat_hlay.addLayout(self.skill_and_glory_vlay)
 
-        self.glory_text_header = QLabel('Glory')
-        self.glory_level_display = QLabel(f'{main_actor.glory}')
-        self.stats_control_hlay.addWidget(QLabel('Glory'))
-        self.stats_control_hlay.addWidget(self.glory_level_display)
+        
+        self.setLayout(self.stat_hlay)
+        self.update_display()
 
     def update_display(self):
-        self.strength_display.setText(str(main_actor.strength))
-        self.dexterity_display.setText(str(main_actor.dexterity))
-        self.willpower_display.setText(str(main_actor.willpower))
-        self.vigor_display.setText(str(main_actor.vigor))
-        self.skill_points_display.setText(str(main_actor.skill_points))
-        self.glory_level_display.setText(str(main_actor.glory))
+        self.strength_display.stat_display.setText(f'{main_actor.strength : ^ 20}')
+        self.dex_display.stat_display.setText(f'{main_actor.dexterity : ^ 20}')
+        self.wil_display.stat_display.setText(f'{main_actor.willpower : ^ 20}')
+        self.vig_display.stat_display.setText(f'{main_actor.vigor : ^ 20}')
+        self.glory_level_display.setText(f'Glory: {str(main_actor.glory)}')
+        self.skill_points_display.setText(f'Skill Points: {str(main_actor.skill_points)}')
+
+    def create_stat_controller(self, attribute):
+        stat_controller = StatWidget(attribute)
+        for button in stat_controller.button_reference_array:
+            button.clicked.connect(self.update_display)
+        return stat_controller
 
 class SkillListWidget(QWidget):
 
