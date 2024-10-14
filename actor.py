@@ -191,7 +191,7 @@ def main():
     print(my_actor.base_stats)
     my_actor.change_culture('Stran')
     print(my_actor.base_stats)
-    my_actor.add_or_upgrade_skill(game_data.trait_dict['Bloodcalling'])
+    my_actor.add_or_upgrade_skill(game_data.trait_dict['Technique'])
 
     print(f'{my_actor.culture.name} {my_actor.archetype.name} of {my_actor.deity.name}')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
@@ -209,7 +209,7 @@ def main():
     print('\nReset!')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
-    print(f'{my_actor.selected_skills[0].name} level {my_actor.selected_skills[0].level}')
+    print(f'\n{my_actor.culture.description}')
 
 if __name__ == '__main__':
     main()
