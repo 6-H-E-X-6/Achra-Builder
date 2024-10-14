@@ -9,26 +9,14 @@ from PyQt5.QtCore import pyqtSignal
 
 
 # TODO:
-# - Either give the skill level
-# display to SkillListButton
-# or find a way to make it globally
-# update (less realistic, honestly)
-#
-# - Fix the formatting on StatsDisplayWidget
-# (1 QVBox per stat and every one of its controls)
+# -Add a stat/skill info display
+# (this is in the Table_TraitsGeneric JSON)
 
 class SkillButton(QPushButton):
     def __init__(self, skill):
         super().__init__()
-        self.skill = skill
-        self.name = skill.name
-        self.level = skill.level
-        self.setText(f'{skill.name}: {skill.level}')
+        self.setText(skill.name)
         self.clicked.connect(lambda state, skill=skill : main_actor.add_or_upgrade_skill(skill))
-        self.clicked.connect(self.update_text)
-
-    def update_text(self):
-        self.setText(f'{self.skill.name}: {self.skill.level}')
 
 
 class StatButton(QPushButton):
@@ -82,16 +70,20 @@ class StatWidget(QWidget):
 class SkillListButton(QPushButton):
     def __init__(self, display_text='None'):
         super().__init__()
+        self.skill_name = ''
         self.setText(display_text)
         self.clicked.connect(self.remove_skill)
 
     def remove_skill(self):
-        if self.text() == 'None':
+        if self.skill_name == '':
             return
         else:
-            main_actor.remove_or_downgrade_skill(trait_dict[self.text()])
-            if trait_dict[self.text()] not in main_actor.selected_skills:
-                self.setText('None')
+            main_actor.remove_or_downgrade_skill(trait_dict[self.skill_name])
+            if trait_dict[self.skill_name] not in main_actor.selected_skills:
+                self.setText('')
+
+    def store_skill_name(self, skill_name):
+        self.skill_name = skill_name
 
 
 class ActorControlWidget(QWidget):
@@ -159,6 +151,7 @@ class StatViewerWidget(QWidget):
             button.clicked.connect(self.update_display)
         return stat_controller
 
+
 class SkillListWidget(QWidget):
 
     def __init__(self, parent=None):
@@ -173,13 +166,15 @@ class SkillListWidget(QWidget):
 
         self.setLayout(self.list_hlay)
 
-    # TODO
-    # This needs to work both ways
     def update(self):
         amount_of_skills = len(main_actor.selected_skills)
         for i in range(amount_of_skills):
             skill_name = main_actor.selected_skills[i].name
-            self.button_list[i].setText(skill_name)
+            skill_level = main_actor.selected_skills[i].level
+            self.button_list[i].setText(f'{skill_name}: {skill_level}')
+
+            if self.button_list[i].skill_name == '':
+                self.button_list[i].store_skill_name(skill_name)
 
         # There's probably a more elegant way
         # to handle this
