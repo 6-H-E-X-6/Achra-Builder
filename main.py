@@ -65,6 +65,7 @@ class StatWidget(QWidget):
 
         self.setLayout(self.vlay)
 
+
 class SkillListButton(QPushButton):
     def __init__(self, display_text='None'):
         super().__init__()
@@ -111,17 +112,16 @@ class StatViewerWidget(QWidget):
         super().__init__()
         self.stat_hlay = QHBoxLayout()
         self.skill_and_glory_vlay = QVBoxLayout()
+        self.speed_vlay = QVBoxLayout()
 
         self.strength_display = self.create_stat_controller('Strength')
-        self.stat_hlay.addWidget(self.strength_display)
-
         self.dex_display = self.create_stat_controller('Dexterity')
-        self.stat_hlay.addWidget(self.dex_display)
-
         self.wil_display = self.create_stat_controller('Willpower')
-        self.stat_hlay.addWidget(self.wil_display)
-
         self.vig_display = self.create_stat_controller('Vigor')
+
+        self.stat_hlay.addWidget(self.strength_display)
+        self.stat_hlay.addWidget(self.dex_display)
+        self.stat_hlay.addWidget(self.wil_display)
         self.stat_hlay.addWidget(self.vig_display)
 
         self.glory_level_display = QLabel(f'Glory: {str(main_actor.glory)}')
@@ -130,6 +130,10 @@ class StatViewerWidget(QWidget):
         self.skill_and_glory_vlay.addWidget(self.glory_level_display)
         self.skill_and_glory_vlay.addWidget(self.skill_points_display)
         self.stat_hlay.addLayout(self.skill_and_glory_vlay)
+
+        self.speed_display = QLabel(f'Speed: {str(main_actor.speed)}')
+        self.speed_vlay.addWidget(self.speed_display)
+        self.stat_hlay.addLayout(self.speed_vlay)
 
         
         self.setLayout(self.stat_hlay)
@@ -142,6 +146,7 @@ class StatViewerWidget(QWidget):
         self.vig_display.stat_display.setText(f'{main_actor.vigor : ^ 20}')
         self.glory_level_display.setText(f'Glory: {str(main_actor.glory)}')
         self.skill_points_display.setText(f'Skill Points: {str(main_actor.skill_points)}')
+        self.speed_display.setText(f'Speed: {str(main_actor.speed)}')
 
     def create_stat_controller(self, attribute):
         stat_controller = StatWidget(attribute)
