@@ -67,6 +67,10 @@ class ActorModel:
         self.deity = game_data.deity_dict[new_deity]
 
 
+    # TODO
+    # Fix the logic for this. It currently
+    # prevents skills from being upgraded
+    # if every skill slot is occupied
     def add_or_upgrade_skill(self, skill):
         total_active_skill_trees = len(self.active_skill_trees)
         total_selected_skills = len(self.selected_skills)
@@ -91,8 +95,6 @@ class ActorModel:
 
         self.skill_points -= skill.point_cost
 
-    # TODO make this remove
-    # active skill trees too
     def remove_or_downgrade_skill(self, skill):
         if skill not in self.selected_skills:
             return
@@ -175,7 +177,7 @@ class ActorModel:
 
         for skill in self.selected_skills:
             skill.level = 0
-            self.selected_skills.remove(skill)
+        self.selected_skills.clear()
         for skill_tree in self.active_skill_trees:
             self.active_skill_trees.remove(skill_tree)
 
