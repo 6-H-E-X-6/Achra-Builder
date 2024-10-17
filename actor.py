@@ -76,7 +76,7 @@ class ActorModel:
         total_selected_skills = len(self.selected_skills)
 
         if ((total_active_skill_trees == MAX_SKILL_TREES  and skill.element not in self.active_skill_trees)
-            or (total_selected_skills == MAX_SKILL_SLOTS)):
+            or (total_selected_skills == MAX_SKILL_SLOTS and skill not in self.selected_skills)):
             return
 
         if skill.point_cost > self.skill_points:
@@ -105,7 +105,6 @@ class ActorModel:
             self.free_unused_tree(skill.element)
         self.skill_points += skill.point_cost
 
-    # Work on this
     def free_unused_tree(self, element):
         active_elements = [skill.element for skill in self.selected_skills]
         if element not in active_elements:
