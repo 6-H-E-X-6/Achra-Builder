@@ -8,10 +8,11 @@ from PyQt5.QtGui import QPalette, QColor, QPixmap
 from PyQt5.QtCore import pyqtSignal
 
 
+EMPTY_STRING = ''
+
 # TODO:
 # -Add a stat/skill info display
 # (this is in the Table_TraitsGeneric JSON)
-
 class SkillButton(QPushButton):
     def __init__(self, skill):
         super().__init__()
@@ -64,23 +65,20 @@ class StatWidget(QWidget):
 
         self.setLayout(self.vlay)
 
-# TODO
-# This really should list skill level instead of
-# the SkillButton class
 class SkillListButton(QPushButton):
     def __init__(self, display_text='None'):
         super().__init__()
-        self.skill_name = ''
+        self.skill_name = EMPTY_STRING
         self.setText(display_text)
         self.clicked.connect(self.remove_skill)
 
     def remove_skill(self):
-        if self.skill_name == '':
+        if self.skill_name == EMPTY_STRING:
             return
         else:
             main_actor.remove_or_downgrade_skill(trait_dict[self.skill_name])
             if trait_dict[self.skill_name] not in main_actor.selected_skills:
-                self.setText('')
+                self.store_skill_name(EMPTY_STRING)
 
     def store_skill_name(self, skill_name):
         self.skill_name = skill_name
@@ -173,7 +171,7 @@ class SkillListWidget(QWidget):
             skill_level = main_actor.selected_skills[i].level
             self.button_list[i].setText(f'{skill_name}: {skill_level}')
 
-            if self.button_list[i].skill_name == '':
+            if self.button_list[i].skill_name == EMPTY_STRING:
                 self.button_list[i].store_skill_name(skill_name)
 
         # There's probably a more elegant way
@@ -202,7 +200,7 @@ class TablesWidget(QWidget):
                       self.bloodTree]
 
         lay = QHBoxLayout()
-        vlay_array = [QVBoxLayout() for i in range(1, 10)]
+        vlay_array = [QVBoxLayout() for i in range(10)]
         for tree, vlay in zip(self.tree_array, vlay_array):
             self.build_column(tree, vlay)
         for vlay in vlay_array:
@@ -259,15 +257,15 @@ class MainView(QMainWindow):
         reset_character_button = QAction("Reset", self)
         reset_character_button.setStatusTip("Reset character stats and skill trees")
         reset_character_button.triggered.connect(main_actor.reset_actor)
+        reset_character_button.triggered.connect(self.clear_skill_list)
         reset_character_button.triggered.connect(self.stats_widget.update_display)
-        reset_character_button.triggered.connect(self.flush_skill_trees)
         self.character_control_bar.addAction(reset_character_button)
         self.setStatusBar(QStatusBar(self))
 
-    def flush_skill_trees(self):
-        for tree in self.table_widget.tree_array:
-            for button in tree:
-                button.update_text()
+    def clear_skill_list(self):
+        self.skill_list_widget.update()
+        for button in self.skill_list_widget.button_list:
+            button.skill_name = EMPTY_STRING
         
 def main():
     app = QApplication([])
