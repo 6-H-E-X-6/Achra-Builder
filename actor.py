@@ -128,10 +128,12 @@ class ActorModel:
             case 'dexterity':
                 if level_up:
                     self.dexterity += 1
+                    self.speed += 2
                 else:
                     if not can_level_down or self.dexterity == self.base_stats['dexterity']:
                         return
                     self.dexterity -= 1
+                    self.speed -= 2
 
             case 'willpower':
                 if level_up:
