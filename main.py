@@ -16,7 +16,7 @@ EMPTY_STRING = ''
 class SkillButton(QPushButton):
     def __init__(self, skill):
         super().__init__()
-        self.setText(skill.name)
+        self.setText(f'{skill.name}\n\n{'Cost: ': ^4}{skill.point_cost}')
         self.clicked.connect(lambda state, skill=skill : main_actor.add_or_upgrade_skill(skill))
 
 
