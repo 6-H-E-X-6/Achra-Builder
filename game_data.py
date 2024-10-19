@@ -58,6 +58,9 @@ with open('tables/Table_Traits.json') as table:
     trait_dict = {sanitize(trait_table[trait]['Name']) : Skill(trait_table[trait]) for trait in trait_table 
                     if sanitize(trait_table[trait]['Name']) not in cut_skills}
 
+
+game_speed_breakpoints = [6, 12, 19, 27, 36, 47, 59, 73, 90, 112, 138, 172, 217, 280, 375, 534, 850, 1000]
+
 def main():
     for trait in trait_dict:
         print(trait_dict[trait].name)
