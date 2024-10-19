@@ -26,6 +26,7 @@ class ActorModel:
         self.speed = 0
         self.glory = 1
         self.skill_points = 9
+        self.turns_before_game_turn = 0
         self.set_base_attributes()
 
 
@@ -36,6 +37,7 @@ class ActorModel:
             self.willpower += character_creation_option.wil_bonus
             self.vigor += character_creation_option.vig_bonus
             self.speed += character_creation_option.speed_bonus
+            self.update_player_turns()
             self.base_stats = {'strength' : self.strength, 'dexterity' : self.dexterity,
                                 'willpower' : self.willpower, 'vigor' : self.vigor,
                                 'speed' : self.speed}
@@ -52,6 +54,7 @@ class ActorModel:
         self.base_stats['willpower'] += (new_option.wil_bonus - current_option.wil_bonus)
         self.base_stats['vigor'] += (new_option.vig_bonus - current_option.vig_bonus)
         self.base_stats['speed'] += (new_option.speed_bonus - current_option.speed_bonus)
+        self.update_player_turns()
 
 
     def change_culture(self, new_culture : str):
@@ -129,11 +132,13 @@ class ActorModel:
                 if level_up:
                     self.dexterity += 1
                     self.speed += 2
+                    self.update_player_turns()
                 else:
                     if not can_level_down or self.dexterity == self.base_stats['dexterity']:
                         return
                     self.dexterity -= 1
                     self.speed -= 2
+                    self.update_player_turns()
 
             case 'willpower':
                 if level_up:
@@ -175,6 +180,7 @@ class ActorModel:
         self.glory = 1
         self.skill_points = 9
         self.set_base_attributes()
+        self.update_player_turns()
 
         for skill in self.selected_skills:
             skill.level = 0
@@ -182,6 +188,17 @@ class ActorModel:
         for skill_tree in self.active_skill_trees:
             self.active_skill_trees.remove(skill_tree)
 
+    def update_player_turns(self):
+        len_of_list = len(game_data.game_speed_breakpoints)
+        upper_breakpoint = game_data.game_speed_breakpoints[-1]
+        for i in range(len_of_list -1):
+            if self.speed >= game_data.game_speed_breakpoints[i] and self.speed < game_data.game_speed_breakpoints[i+1]:
+                self.turns_before_game_turn = i + 1
+                return
+            elif self.speed >= upper_breakpoint:
+                self.turns_before_game_turn = len_of_list - 1
+
+            
 main_actor = ActorModel('Stran', 'Amir', 'Ashem')
 
 # Default TEST case to make sure none
@@ -213,6 +230,7 @@ def main():
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
     print(f'\n{my_actor.culture.description}')
+    print(f'Game turns = {main_actor.turns_before_game_turn}')
 
 if __name__ == '__main__':
     main()
