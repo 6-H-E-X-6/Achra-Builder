@@ -132,7 +132,9 @@ class StatViewerWidget(QWidget):
         self.stat_hlay.addLayout(self.skill_and_glory_vlay)
 
         self.speed_display = QLabel(f'Speed: {str(main_actor.speed)}')
+        self.game_turn_display = QLabel(f'Turns per game turn: {str(main_actor.turns_before_game_turn)}')
         self.speed_vlay.addWidget(self.speed_display)
+        self.speed_vlay.addWidget(self.game_turn_display)
         self.stat_hlay.addLayout(self.speed_vlay)
 
         
@@ -147,6 +149,7 @@ class StatViewerWidget(QWidget):
         self.glory_level_display.setText(f'Glory: {str(main_actor.glory)}')
         self.skill_points_display.setText(f'Skill Points: {str(main_actor.skill_points)}')
         self.speed_display.setText(f'Speed: {str(main_actor.speed)}')
+        self.game_turn_display.setText(f'Turns per game turn: {str(main_actor.turns_before_game_turn)}')
 
     def create_stat_controller(self, attribute):
         stat_controller = StatWidget(attribute)
