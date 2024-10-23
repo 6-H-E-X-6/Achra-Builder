@@ -197,6 +197,7 @@ class ActorModel:
                 return
             elif self.speed >= upper_breakpoint:
                 self.turns_before_game_turn = len_of_list - 1
+                return
 
             
 main_actor = ActorModel('Stran', 'Amir', 'Ashem')
