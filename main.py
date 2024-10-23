@@ -9,6 +9,7 @@ from PyQt5.QtCore import pyqtSignal
 
 
 EMPTY_STRING = ''
+EMPTY_SKILL_BUTTON_TEXT = 'None' # Just so no one confuses this for the None type
 
 # TODO:
 # -Add a stat/skill info display
@@ -67,11 +68,12 @@ class StatWidget(QWidget):
 
 
 class SkillListButton(QPushButton):
-    def __init__(self, display_text='None'):
+    def __init__(self, display_text=EMPTY_SKILL_BUTTON_TEXT):
         super().__init__()
         self.skill_name = EMPTY_STRING
         self.setText(display_text)
         self.clicked.connect(self.remove_skill)
+
 
     def remove_skill(self):
         if self.skill_name == EMPTY_STRING:
@@ -81,6 +83,8 @@ class SkillListButton(QPushButton):
             if trait_dict[self.skill_name] not in main_actor.selected_skills:
                 self.store_skill_name(EMPTY_STRING)
 
+    # This exists ONLY to aid in
+    # the readability of API calls
     def store_skill_name(self, skill_name):
         self.skill_name = skill_name
 
@@ -159,7 +163,6 @@ class StatViewerWidget(QWidget):
 
 
 class SkillListWidget(QWidget):
-
     def __init__(self, parent=None):
         super().__init__()
         self.list_hlay = QHBoxLayout()
@@ -184,10 +187,10 @@ class SkillListWidget(QWidget):
 
         # There's probably a more elegant way
         # to handle this
-        for button in self.button_list[amount_of_skills:]:
-            button.setText('None')
+        empty_button_slots = self.button_list[amount_of_skills:]
+        for button in empty_button_slots:
+            button.setText(EMPTY_SKILL_BUTTON_TEXT)
 
-       
 
 class TablesWidget(QWidget):
     def __init__(self, parent=None):
