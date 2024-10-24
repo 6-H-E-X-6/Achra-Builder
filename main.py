@@ -141,7 +141,6 @@ class StatViewerWidget(QWidget):
         self.speed_vlay.addWidget(self.game_turn_display)
         self.stat_hlay.addLayout(self.speed_vlay)
 
-        
         self.setLayout(self.stat_hlay)
         self.update_display()
 
@@ -178,12 +177,12 @@ class SkillListWidget(QWidget):
     def update(self):
         amount_of_skills = len(main_actor.selected_skills)
         for i in range(amount_of_skills):
-            skill_name = main_actor.selected_skills[i].name
-            skill_level = main_actor.selected_skills[i].level
-            self.button_list[i].setText(f'{skill_name}: {skill_level}')
+            indexed_skill_name = main_actor.selected_skills[i].name
+            indexed_skill_level = main_actor.selected_skills[i].level
+            self.button_list[i].setText(f'{indexed_skill_name}: {indexed_skill_level}')
 
             if self.button_list[i].skill_name == EMPTY_STRING:
-                self.button_list[i].store_skill_name(skill_name)
+                self.button_list[i].store_skill_name(indexed_skill_name)
 
         # There's probably a more elegant way
         # to handle this
