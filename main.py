@@ -88,6 +88,10 @@ class SkillListButton(QPushButton):
     def store_skill_name(self, skill_name):
         self.skill_name = skill_name
 
+    def reset(self):
+        self.setText(EMPTY_SKILL_BUTTON_TEXT)
+        self.store_skill_name(EMPTY_STRING)
+
 
 class ActorControlWidget(QWidget):
     def __init__(self, parent=None):
@@ -178,25 +182,17 @@ class SkillListWidget(QWidget):
     # completely wrong skill for some reason
     def update(self):
         amount_of_skills = len(main_actor.selected_skills)
-        print(f'\nArray length = {amount_of_skills}')
-        print('skills:')
         for i in range(amount_of_skills):
             indexed_skill_name = main_actor.selected_skills[i].name
             indexed_skill_level = main_actor.selected_skills[i].level
             self.button_list[i].setText(f'{indexed_skill_name}: {indexed_skill_level}')
             self.button_list[i].store_skill_name(indexed_skill_name)
 
-            # if self.button_list[i].skill_name == EMPTY_STRING:
-                # self.button_list[i].store_skill_name(indexed_skill_name)
-                # print(f'\nAdded skill:{indexed_skill_name}\n')
-            print(f'{indexed_skill_name} level {indexed_skill_level} in slot {i+1} with reference to skill {self.button_list[i].skill_name}')
-
         # There's probably a more elegant way
         # to handle this
         empty_button_slots = self.button_list[amount_of_skills:]
         for button in empty_button_slots:
-            button.setText(EMPTY_SKILL_BUTTON_TEXT)
-            button.store_skill_name(EMPTY_STRING)
+            button.reset()
 
 
 class TablesWidget(QWidget):
