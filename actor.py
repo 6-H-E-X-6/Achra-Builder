@@ -196,7 +196,33 @@ class ActorModel:
                 self.turns_before_game_turn = len_of_list - 1
                 return
 
-            
+    def export_data(self, export_as_json=True):
+        if export_as_json:
+            main_data = {'Culture': self.culture.name,
+                         'Class': self.archetype.name,
+                         'Religion': self.deity.name,
+                         'Glory': self.glory,
+                         'Skills': [f'{skill.name}: {skill.level}' for skill in self.selected_skills], # TODO fix this implementation
+                         'Strength': self.strength,
+                         'Dexterity': self.dexterity,
+                         'Willpower': self.willpower,
+                         'Vigor': self.vigor,
+                         'Speed': self.speed}
+            output = json.dumps(main_data)
+        else:
+            output = (f'Culture: {self.culture.name}\n'
+                      f'Class: {self.archetype.name}\n'
+                      f'Religion: {self.deity.name}\n'
+                      f'Glory: {self.glory}\n'
+                      f'Skills:\n {[f'{skill.name}: {skill.level}' for skill in self.selected_skills]}\n'
+                      f'Strength: {self.strength}\n'
+                      f'Dexterity: {self.dexterity}\n'
+                      f'Willpower: {self.willpower}\n'
+                      f'Vigor: {self.vigor}\n'
+                      f'Speed: {self.speed}\n')
+        return output
+                      
+
 main_actor = ActorModel('Stran', 'Amir', 'Ashem')
 
 # Default TEST case to make sure none
@@ -222,13 +248,14 @@ def main():
     print('\nLevelled up!')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
+    my_actor.export_data(export_as_json=False)
 
-    my_actor.reset_actor()
-    print('\nReset!')
-    print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
-          f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
-    print(f'\n{my_actor.culture.description}')
-    print(f'Game turns = {main_actor.turns_before_game_turn}')
+    # my_actor.reset_actor()
+    # print('\nReset!')
+    # print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
+          # f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
+    # print(f'\n{my_actor.culture.description}')
+    # print(f'Game turns = {main_actor.turns_before_game_turn}')
 
 if __name__ == '__main__':
     main()
