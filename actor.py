@@ -70,16 +70,13 @@ class ActorModel:
         self.deity = game_data.deity_dict[new_deity]
 
 
-    # TODO
-    # Fix the logic for this. It currently
-    # prevents skills from being upgraded
-    # if every skill slot is occupied
     def add_or_upgrade_skill(self, skill):
         total_active_skill_trees = len(self.active_skill_trees)
         total_selected_skills = len(self.selected_skills)
+        is_not_upgrading = total_selected_skills == MAX_SKILL_SLOTS and skill not in self.selected_skills
+        surpassing_element_cap = total_active_skill_trees == MAX_SKILL_TREES and skill.element not in self.active_skill_trees
 
-        if ((total_active_skill_trees == MAX_SKILL_TREES  and skill.element not in self.active_skill_trees)
-            or (total_selected_skills == MAX_SKILL_SLOTS and skill not in self.selected_skills)):
+        if surpassing_element_cap or is_not_upgrading:
             return
 
         if skill.point_cost > self.skill_points:
