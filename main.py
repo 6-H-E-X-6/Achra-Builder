@@ -271,8 +271,27 @@ class MainView(QMainWindow):
         reset_character_button.triggered.connect(main_actor.reset_actor)
         reset_character_button.triggered.connect(self.skill_list_widget.update)
         reset_character_button.triggered.connect(self.stats_widget.update_display)
+
+        export_as_json_button = QAction("Export as JSON", self)
+        export_as_json_button.setStatusTip("Export this character to a JSON file.")
+        export_as_json_button.triggered.connect(self.write_json_to_file)
+
+        export_as_plaintext_button = QAction("Export as plaintext", self)
+        export_as_plaintext_button.setStatusTip("Export character data to plaintext")
+        export_as_plaintext_button.triggered.connect(self.write_plaintext_to_file)
+        
         self.character_control_bar.addAction(reset_character_button)
+        self.character_control_bar.addAction(export_as_json_button)
+        self.character_control_bar.addAction(export_as_plaintext_button)
         self.setStatusBar(QStatusBar(self))
+
+    def write_json_to_file(self):
+        with open('CharacterExport.json', 'x') as export_file:
+            export_file.write(main_actor.export_data())
+
+    def write_plaintext_to_file(self):
+        with open('CharacterExport.txt', 'x') as export_file:
+            export_file.write(main_actor.export_data(export_as_json=False))
 
 
 def main():
