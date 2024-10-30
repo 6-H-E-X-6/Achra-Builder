@@ -178,8 +178,6 @@ class SkillListWidget(QWidget):
 
         self.setLayout(self.list_hlay)
 
-    # BUG this sometimes removes the
-    # completely wrong skill for some reason
     def update(self):
         amount_of_skills = len(main_actor.selected_skills)
         for i in range(amount_of_skills):
@@ -271,16 +269,12 @@ class MainView(QMainWindow):
         reset_character_button = QAction("Reset", self)
         reset_character_button.setStatusTip("Reset character stats and skill trees")
         reset_character_button.triggered.connect(main_actor.reset_actor)
-        reset_character_button.triggered.connect(self.clear_skill_list)
+        reset_character_button.triggered.connect(self.skill_list_widget.update)
         reset_character_button.triggered.connect(self.stats_widget.update_display)
         self.character_control_bar.addAction(reset_character_button)
         self.setStatusBar(QStatusBar(self))
 
-    def clear_skill_list(self):
-        self.skill_list_widget.update()
-        for button in self.skill_list_widget.button_list:
-            button.skill_name = EMPTY_STRING
-        
+
 def main():
     app = QApplication([])
     # app.setStyleSheet(window_stylesheet)
