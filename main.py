@@ -1,3 +1,4 @@
+import os
 from game_data import Skill, culture_dict, archetype_dict, deity_dict, trait_dict
 from actor import main_actor, MAX_SKILL_SLOTS
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QHBoxLayout,
@@ -285,13 +286,20 @@ class MainView(QMainWindow):
         self.character_control_bar.addAction(export_as_plaintext_button)
         self.setStatusBar(QStatusBar(self))
 
+    # TODO all of this needs to be cleaned
     def write_json_to_file(self):
+        if os.path.isfile('CharacterExport.json'):
+            os.remove('CharacterExport.json')
+
         with open('CharacterExport.json', 'x') as export_file:
             export_file.write(main_actor.export_data())
 
     def write_plaintext_to_file(self):
+        if os.path.isfile('CharacterExport.txt'):
+            os.remove('CharacterExport.txt')
         with open('CharacterExport.txt', 'x') as export_file:
             export_file.write(main_actor.export_data(export_as_json=False))
+    # TODO all of this ^
 
 
 def main():
