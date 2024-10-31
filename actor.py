@@ -1,6 +1,3 @@
-# This will be the main interface through which
-# the frontend will communicate with the backend.
-
 import game_data
 import json
 
