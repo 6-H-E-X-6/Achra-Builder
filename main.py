@@ -133,15 +133,15 @@ class StatViewerWidget(QWidget):
         self.stat_hlay.addWidget(self.wil_display)
         self.stat_hlay.addWidget(self.vig_display)
 
-        self.glory_level_display = QLabel(f'Glory: {str(main_actor.glory)}')
-        self.skill_points_display = QLabel(f'Skill Points: {str(main_actor.skill_points)}')
+        self.glory_level_display = QLabel()
+        self.skill_points_display = QLabel()
 
         self.skill_and_glory_vlay.addWidget(self.glory_level_display)
         self.skill_and_glory_vlay.addWidget(self.skill_points_display)
         self.stat_hlay.addLayout(self.skill_and_glory_vlay)
 
-        self.speed_display = QLabel(f'Speed: {str(main_actor.speed)}')
-        self.game_turn_display = QLabel(f'Turns per game turn: {str(main_actor.turns_before_game_turn)}')
+        self.speed_display = QLabel()
+        self.game_turn_display = QLabel()
         self.speed_vlay.addWidget(self.speed_display)
         self.speed_vlay.addWidget(self.game_turn_display)
         self.stat_hlay.addLayout(self.speed_vlay)
@@ -154,10 +154,10 @@ class StatViewerWidget(QWidget):
         self.dex_display.stat_display.setText(f'{main_actor.dexterity : ^ 20}')
         self.wil_display.stat_display.setText(f'{main_actor.willpower : ^ 20}')
         self.vig_display.stat_display.setText(f'{main_actor.vigor : ^ 20}')
-        self.glory_level_display.setText(f'Glory: {str(main_actor.glory)}')
-        self.skill_points_display.setText(f'Skill Points: {str(main_actor.skill_points)}')
-        self.speed_display.setText(f'Speed: {str(main_actor.speed)}')
-        self.game_turn_display.setText(f'Turns per game turn: {str(main_actor.turns_before_game_turn)}')
+        self.glory_level_display.setText(f'Glory: {main_actor.glory}')
+        self.skill_points_display.setText(f'Skill Points: {main_actor.skill_points}')
+        self.speed_display.setText(f'Speed: {main_actor.speed}')
+        self.game_turn_display.setText(f'Turns per game turn: {main_actor.turns_before_game_turn}')
 
     def create_stat_controller(self, attribute):
         stat_controller = StatWidget(attribute)
