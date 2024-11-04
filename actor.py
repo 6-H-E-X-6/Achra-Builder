@@ -183,10 +183,10 @@ class ActorModel:
             self.active_skill_trees.remove(skill_tree)
 
     def update_player_turns(self):
-        len_of_list = len(game_data.game_speed_breakpoints)
-        upper_breakpoint = game_data.game_speed_breakpoints[-1]
+        len_of_list = len(game_data.GAME_SPEED_BREAKPOINTS)
+        upper_breakpoint = game_data.GAME_SPEED_BREAKPOINTS[-1]
         for i in range(len_of_list -1):
-            if self.speed >= game_data.game_speed_breakpoints[i] and self.speed < game_data.game_speed_breakpoints[i+1]:
+            if self.speed >= game_data.GAME_SPEED_BREAKPOINTS[i] and self.speed < game_data.GAME_SPEED_BREAKPOINTS[i+1]:
                 self.turns_before_game_turn = i + 1
                 return
             elif self.speed >= upper_breakpoint:
