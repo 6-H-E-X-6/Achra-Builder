@@ -190,7 +190,7 @@ class ActorModel:
                 self.turns_before_game_turn = i + 1
                 return
             elif self.speed >= upper_breakpoint:
-                self.turns_before_game_turn = len_of_list - 1
+                self.turns_before_game_turn = len_of_list
                 return
 
     def export_data(self, export_as_json=True):
@@ -245,7 +245,10 @@ def main():
     print('\nLevelled up!')
     print(f'base STR: {my_actor.strength}, base DEX: {my_actor.dexterity}, base WIL: {my_actor.willpower}',
           f'base vigor: {my_actor.vigor}, base speed: {my_actor.speed}')
-    my_actor.export_data(export_as_json=False)
+    my_actor.speed = 2500
+    my_actor.update_player_turns()
+    print(f'Turns above speed breakpoint:{my_actor.turns_before_game_turn}')
+    # my_actor.export_data(export_as_json=False)
 
     # my_actor.reset_actor()
     # print('\nReset!')
