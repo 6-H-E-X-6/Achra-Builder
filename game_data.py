@@ -1,6 +1,7 @@
 import json
 from json_cleaner import sanitize
 
+GAME_SPEED_BREAKPOINTS = [5, 11, 17, 24, 32, 40, 50, 62, 75, 91, 111, 134, 163, 200, 250, 320, 425, 600, 950, 2000]
 
 class Race:
     def __init__ (self, id: dict):
@@ -58,8 +59,6 @@ with open('tables/Table_Traits.json') as table:
     trait_dict = {sanitize(trait_table[trait]['Name']) : Skill(trait_table[trait]) for trait in trait_table 
                     if sanitize(trait_table[trait]['Name']) not in cut_skills}
 
-
-game_speed_breakpoints = [6, 12, 19, 27, 36, 47, 59, 73, 90, 112, 138, 172, 217, 280, 375, 534, 850, 1000]
 
 def main():
     for trait in trait_dict:
