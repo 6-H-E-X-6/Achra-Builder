@@ -4,7 +4,7 @@ from actor import main_actor, MAX_SKILL_SLOTS
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QHBoxLayout,
                              QVBoxLayout, QPushButton, QWidget, QToolButton,
                               QStackedLayout, QLabel, QComboBox, QToolBar,
-                              QAction, QStatusBar)
+                              QAction, QStatusBar, QMenu, QMenuBar, QFileDialog)
 from PyQt5.QtGui import QPalette, QColor, QPixmap
 from PyQt5.QtCore import pyqtSignal
 
@@ -241,9 +241,11 @@ class MainView(QMainWindow):
         self.actor_widget = ActorControlWidget()
         self.stats_widget = StatViewerWidget()
         self.skill_list_widget = SkillListWidget()
+        self.create_menu_bar()
        
         _widget = QWidget()
         _layout = QVBoxLayout(_widget)
+
         _layout.addWidget(self.actor_widget)
         _layout.addWidget(self.stats_widget)
         _layout.addWidget(self.skill_list_widget)
@@ -273,32 +275,39 @@ class MainView(QMainWindow):
         reset_character_button.triggered.connect(self.skill_list_widget.update)
         reset_character_button.triggered.connect(self.stats_widget.update_display)
 
-        export_as_json_button = QAction("Export as JSON", self)
-        export_as_json_button.setStatusTip("Export this character to a JSON file.")
-        export_as_json_button.triggered.connect(self.write_json_to_file)
-
-        export_as_plaintext_button = QAction("Export as plaintext", self)
-        export_as_plaintext_button.setStatusTip("Export character data to plaintext")
-        export_as_plaintext_button.triggered.connect(self.write_plaintext_to_file)
-        
         self.character_control_bar.addAction(reset_character_button)
-        self.character_control_bar.addAction(export_as_json_button)
-        self.character_control_bar.addAction(export_as_plaintext_button)
         self.setStatusBar(QStatusBar(self))
 
-    # TODO all of this needs to be cleaned
-    def write_json_to_file(self):
-        if os.path.isfile('CharacterExport.json'):
-            os.remove('CharacterExport.json')
+    def write_to_json(self):
+        file_name_tuple = QFileDialog.getSaveFileName(self, 'Save file')
+        if file_name_tuple[0] == '':
+            return # Needed to prevent junk flowing into stdout
+        file_name = file_name_tuple[0]
+        with open(file_name, 'w') as file:
+            file.write(main_actor.export_data())
 
-        with open('CharacterExport.json', 'x') as export_file:
-            export_file.write(main_actor.export_data())
+    def write_to_plaintext(self):
+        file_name_tuple = QFileDialog.getSaveFileName(self, 'Save file')
+        if file_name_tuple[0] == '':
+            return
+        file_name = file_name_tuple[0]
+        with open(file_name, 'w') as file:
+            file.write(main_actor.export_data(export_as_json=False))
 
-    def write_plaintext_to_file(self):
-        if os.path.isfile('CharacterExport.txt'):
-            os.remove('CharacterExport.txt')
-        with open('CharacterExport.txt', 'x') as export_file:
-            export_file.write(main_actor.export_data(export_as_json=False))
+    def create_menu_bar(self):
+        menu_bar = QMenuBar(self)
+        self.setMenuBar(menu_bar)
+
+        export_json_action = QAction('Export as JSON', self)
+        export_json_action.setStatusTip('Export this character to a JSON file.')
+        export_json_action.triggered.connect(self.write_to_json)
+        export_plaintext_action = QAction('Export as plaintext', self)
+        export_plaintext_action.setStatusTip('Export character data to plaintext')
+        export_plaintext_action.triggered.connect(self.write_to_plaintext)
+
+        file_menu = QMenu('&File', self)
+        file_menu.addActions([export_json_action, export_plaintext_action])
+        menu_bar.addMenu(file_menu)
     # TODO all of this ^
 
 
