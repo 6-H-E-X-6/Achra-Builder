@@ -199,7 +199,7 @@ class ActorModel:
                          'Class': self.archetype.name,
                          'Religion': self.deity.name,
                          'Glory': self.glory,
-                         'Skills': [f'{skill.name}: {skill.level}' for skill in self.selected_skills], # TODO fix this implementation
+                         'Skills': [f'{skill.name}:{skill.level}' for skill in self.selected_skills], # TODO fix this implementation
                          'Strength': self.strength,
                          'Dexterity': self.dexterity,
                          'Willpower': self.willpower,
@@ -210,7 +210,7 @@ class ActorModel:
             if len(self.selected_skills) == 0:
                 plaintext_skill_ouput = 'No selected skills'
             else:
-                plaintext_skill_output = ' '.join([f'{skill.name}: {skill.level}' for skill in self.selected_skills])
+                plaintext_skill_output = ' '.join([f'{skill.name} {skill.level}' for skill in self.selected_skills])
             output = (f'Culture: {self.culture.name}\n'
                       f'Class: {self.archetype.name}\n'
                       f'Religion: {self.deity.name}\n'
