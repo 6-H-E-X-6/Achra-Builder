@@ -207,11 +207,15 @@ class ActorModel:
                          'Speed': self.speed}
             output = json.dumps(main_data)
         else:
+            if len(self.selected_skills) == 0:
+                plaintext_skill_ouput = 'No selected skills'
+            else:
+                plaintext_skill_output = ' '.join([f'{skill.name}: {skill.level}' for skill in self.selected_skills])
             output = (f'Culture: {self.culture.name}\n'
                       f'Class: {self.archetype.name}\n'
                       f'Religion: {self.deity.name}\n'
                       f'Glory: {self.glory}\n'
-                      f'Skills:\n {[f'{skill.name}: {skill.level}' for skill in self.selected_skills]}\n'
+                      f'Skills: {plaintext_skill_output}\n'
                       f'Strength: {self.strength}\n'
                       f'Dexterity: {self.dexterity}\n'
                       f'Willpower: {self.willpower}\n'
