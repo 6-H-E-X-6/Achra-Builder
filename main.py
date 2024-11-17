@@ -5,8 +5,6 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QHBoxLayout,
                              QVBoxLayout, QPushButton, QWidget, QToolButton,
                               QStackedLayout, QLabel, QComboBox, QToolBar,
                               QAction, QStatusBar, QMenu, QMenuBar, QFileDialog)
-from PyQt5.QtGui import QPalette, QColor, QPixmap
-from PyQt5.QtCore import pyqtSignal
 
 
 EMPTY_STRING = ''
@@ -226,14 +224,6 @@ class TablesWidget(QWidget):
 
 
 
-window_stylesheet = """
-    QMainWindow {
-        border-image: url(graphical/Approach48.png);
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-"""
-
 class MainView(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -257,13 +247,7 @@ class MainView(QMainWindow):
         self.actor_widget.archetype_dropdown.currentTextChanged.connect(self.stats_widget.update_display)
         self.actor_widget.deity_dropdown.currentTextChanged.connect(self.stats_widget.update_display)
 
-        for tree in self.table_widget.tree_array:
-            for button in tree:
-                button.clicked.connect(self.stats_widget.update_display)
-                button.clicked.connect(self.skill_list_widget.update)
-
-        for button in self.skill_list_widget.button_list:
-            button.clicked.connect(self.stats_widget.update_display)
+        self.initialize_buttons()
 
         # TODO refactor in a more modular way
         self.character_control_bar = QToolBar("Main Toolbar")
@@ -277,6 +261,15 @@ class MainView(QMainWindow):
 
         self.character_control_bar.addAction(reset_character_button)
         self.setStatusBar(QStatusBar(self))
+
+    def initialize_buttons(self):
+        for tree in self.table_widget.tree_array:
+            for button in tree:
+                button.clicked.connect(self.stats_widget.update_display)
+                button.clicked.connect(self.skill_list_widget.update)
+
+        for button in self.skill_list_widget.button_list:
+            button.clicked.connect(self.stats_widget.update_display)
 
     def write_to_json(self):
         file_name_tuple = QFileDialog.getSaveFileName(self, 'Save file')
@@ -298,11 +291,11 @@ class MainView(QMainWindow):
         menu_bar = QMenuBar(self)
         self.setMenuBar(menu_bar)
 
-        export_json_action = QAction('Export as JSON', self)
+        export_json_action = QAction('Export data as JSON', self)
         export_json_action.setStatusTip('Export this character to a JSON file.')
         export_json_action.triggered.connect(self.write_to_json)
-        export_plaintext_action = QAction('Export as plaintext', self)
-        export_plaintext_action.setStatusTip('Export character data to plaintext')
+        export_plaintext_action = QAction('Export data as text', self)
+        export_plaintext_action.setStatusTip('Export character data to a text document')
         export_plaintext_action.triggered.connect(self.write_to_plaintext)
 
         file_menu = QMenu('&File', self)
@@ -312,8 +305,26 @@ class MainView(QMainWindow):
 
 
 def main():
+    window_stylesheet = """
+        QMainWindow {
+            border-image: url(graphical/CompositeBackground.png);
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        QLabel {
+            color: rgb(160, 160, 160);
+        }
+
+        QPushButton {
+            border: 0.5px solid;
+            color: rgb(160, 160, 160);
+            background-color: black;
+            border-color: rgb(175, 93, 253);
+        }
+    """
     app = QApplication([])
-    # app.setStyleSheet(window_stylesheet)
+    app.setStyleSheet(window_stylesheet)
     mainView = MainView()
     mainView.show()
     app.exec()
