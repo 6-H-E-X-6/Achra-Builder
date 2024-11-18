@@ -249,19 +249,6 @@ class MainView(QMainWindow):
 
         self.initialize_buttons()
 
-        # TODO refactor in a more modular way
-        self.character_control_bar = QToolBar("Main Toolbar")
-        self.addToolBar(self.character_control_bar)
-
-        reset_character_button = QAction("Reset", self)
-        reset_character_button.setStatusTip("Reset character stats and skill trees")
-        reset_character_button.triggered.connect(main_actor.reset_actor)
-        reset_character_button.triggered.connect(self.skill_list_widget.update)
-        reset_character_button.triggered.connect(self.stats_widget.update_display)
-
-        self.character_control_bar.addAction(reset_character_button)
-        self.setStatusBar(QStatusBar(self))
-
     def initialize_buttons(self):
         for tree in self.table_widget.tree_array:
             for button in tree:
@@ -294,17 +281,30 @@ class MainView(QMainWindow):
         export_json_action = QAction('Export data as JSON', self)
         export_json_action.setStatusTip('Export this character to a JSON file.')
         export_json_action.triggered.connect(self.write_to_json)
+
         export_plaintext_action = QAction('Export data as text', self)
         export_plaintext_action.setStatusTip('Export character data to a text document')
         export_plaintext_action.triggered.connect(self.write_to_plaintext)
 
+        reset_character_action = QAction("Reset", self)
+        reset_character_action.setStatusTip("Reset character stats and skill trees")
+        reset_character_action.triggered.connect(main_actor.reset_actor)
+        reset_character_action.triggered.connect(self.skill_list_widget.update)
+        reset_character_action.triggered.connect(self.stats_widget.update_display)
+
         file_menu = QMenu('&File', self)
         file_menu.addActions([export_json_action, export_plaintext_action])
+        edit_menu = QMenu('&Edit', self)
+        edit_menu.addAction(reset_character_action)
+
         menu_bar.addMenu(file_menu)
-    # TODO all of this ^
+        menu_bar.addMenu(edit_menu)
 
 
 def main():
+    # This will be relegated to its own
+    # file when it's finalized. This is
+    # simply to speed up development.
     window_stylesheet = """
         QMainWindow {
             border-image: url(graphical/CompositeBackground.png);
@@ -313,16 +313,27 @@ def main():
         }
 
         QLabel {
-            color: rgb(160, 160, 160);
+            color: rgb(239, 239, 239);
         }
 
         QPushButton {
             border: 0.5px solid;
             color: rgb(160, 160, 160);
             background-color: black;
+            border-color: rgb(48, 25, 52);
+        }
+
+        QPushButton:hover {
             border-color: rgb(175, 93, 253);
+            color: rgb(239, 239, 239)
+        }
+
+        QMenuBar {
+            background-color: black;
+            color: rgb(239, 239, 239);
         }
     """
+
     app = QApplication([])
     app.setStyleSheet(window_stylesheet)
     mainView = MainView()
