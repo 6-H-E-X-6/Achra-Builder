@@ -1,10 +1,9 @@
-import os
 from game_data import Skill, culture_dict, archetype_dict, deity_dict, trait_dict
 from actor import main_actor, MAX_SKILL_SLOTS
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QLabel, QHBoxLayout,
                              QVBoxLayout, QPushButton, QWidget, QToolButton,
                               QStackedLayout, QLabel, QComboBox, QToolBar,
-                              QAction, QStatusBar, QMenu, QMenuBar, QFileDialog)
+                              QAction, QStatusBar, QMenu, QMenuBar, QFileDialog, QSizePolicy)
 
 
 EMPTY_STRING = ''
@@ -16,6 +15,7 @@ EMPTY_SKILL_BUTTON_TEXT = 'None' # Just so no one confuses this for the None typ
 class SkillButton(QPushButton):
     def __init__(self, skill):
         super().__init__()
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.setText(f'{skill.name}\n\n{'Cost: ': ^4}{skill.point_cost}')
         self.clicked.connect(lambda state, skill=skill : main_actor.add_or_upgrade_skill(skill))
 
@@ -302,38 +302,8 @@ class MainView(QMainWindow):
 
 
 def main():
-    # This will be relegated to its own
-    # file when it's finalized. This is
-    # simply to speed up development.
-    window_stylesheet = """
-        QMainWindow {
-            border-image: url(graphical/CompositeBackground.png);
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        QLabel {
-            color: rgb(239, 239, 239);
-        }
-
-        QPushButton {
-            border: 0.5px solid;
-            color: rgb(160, 160, 160);
-            background-color: black;
-            border-color: rgb(48, 25, 52);
-        }
-
-        QPushButton:hover {
-            border-color: rgb(175, 93, 253);
-            color: rgb(239, 239, 239)
-        }
-
-        QMenuBar {
-            background-color: black;
-            color: rgb(239, 239, 239);
-        }
-    """
-
+    with open('style.css') as stylesheet:
+        window_stylesheet = stylesheet.read()
     app = QApplication([])
     app.setStyleSheet(window_stylesheet)
     mainView = MainView()
