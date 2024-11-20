@@ -1,0 +1,37 @@
+QMainWindow {
+    border-image: url(graphical/CompositeBackground.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+QLabel {
+    color: rgb(239, 239, 239);
+}
+
+QPushButton {
+    border: 1px solid;
+    color: rgb(160, 160, 160);
+    background-color: black;
+    border-color: rgb(48, 25, 52);
+}
+
+QPushButton:hover {
+    border-color: rgb(175, 93, 253);
+    color: rgb(239, 239, 239)
+}
+
+QMenuBar {
+    background-color: black;
+    color: rgb(239, 239, 239);
+}
+
+QComboBox:editable, QComboBox:!editable {
+    background-color: black;
+    color: rgb(239, 239, 239);
+    selection-background-color: rgb(102, 102, 255);
+}
+
+QListView {
+    background-color: black;
+    color: rgb(239, 239, 239);
+}
