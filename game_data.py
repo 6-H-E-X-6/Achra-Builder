@@ -1,4 +1,5 @@
 import json
+import os
 from json_cleaner import sanitize
 
 GAME_SPEED_BREAKPOINTS = [5, 11, 17, 24, 32, 40, 50, 62, 75, 91, 111, 134, 163, 200, 250, 320, 425, 600, 950, 2000]
@@ -43,6 +44,14 @@ class Skill:
 # Couldn't find a better way to
 # initialize business models from
 # the JSON. Might revise later
+required_files = ['tables/Table_Gods.json', 'tables/Table_Classes.json', 'tables/Table_Races.json', 'tables/Table_Traits.json']
+missing_files = 0
+for file_path in required_files:
+    if not os.path.exists(file_path):
+        print(f'Missing file: {file_path}')
+        missing_files += 1
+if missing_files > 0:
+    exit('Process aborted: missing JSON files')
 with open('tables/Table_Gods.json') as table:
     deity_table = json.load(table)
     deity_dict = {sanitize(deity_table[deity]['name']): Archetype_Or_Religion(deity_table[deity]) for deity in deity_table}
